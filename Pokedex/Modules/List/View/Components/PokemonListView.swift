@@ -40,7 +40,6 @@ struct PokemonListView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-
         if isSearching {
             ZStack {
                 Color.white.opacity(0.5)
@@ -52,6 +51,5 @@ struct PokemonListView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-
     }
 }

@@ -11,6 +11,8 @@ import Foundation
 class ListVM: ObservableObject {
     @Published private(set) var pokemon: [PokemonsEntity] = []
     @Published private(set) var pokedex: [PokedexEntity] = []
+    @Published var filteredPokemons: [PokemonsEntity] = []
+    @Published var isSearching: Bool = false
     private let repository: PokemonRepository
 
     init(repository: PokemonRepository) {
@@ -22,6 +24,7 @@ class ListVM: ObservableObject {
             self.pokedex = try repository.fetchPokedexMetadata()
             self.pokemon = try await repository.fetchAndStorePokemons()
             self.pokemon.sort { $0.id < $1.id }
+            self.filteredPokemons = self.pokemon
         } catch {
             print("Error fetching pokemons: \(error.localizedDescription)")
         }
@@ -29,5 +32,25 @@ class ListVM: ObservableObject {
     
     func formatID(_ id: Int) -> String {
         return String(format: "%04d", id)
+    }
+
+    func handleSearchChange(_ searchQuery: String) {
+        if searchQuery.isEmpty {
+            filteredPokemons = pokemon
+            isSearching = false
+        } else {
+            isSearching = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.filteredPokemons = self.pokemon.filter {
+                    $0.name.lowercased().contains(searchQuery.lowercased())
+                }
+                self.isSearching = false
+            }
+        }
+    }
+
+    func clearSearch() {
+        filteredPokemons = pokemon
+        isSearching = false
     }
 }
