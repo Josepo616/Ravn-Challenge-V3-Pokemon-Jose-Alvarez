@@ -52,10 +52,12 @@ struct SearchHeaderView: View {
                             onSearchChange(newValue)
                         }
                 }
-                Button(action: onClearSearch) {
-                    Text("Cancel")
-                        .foregroundColor(.blue)
-                        .padding(.trailing, 10)
+                if !searchQuery.isEmpty {
+                    Button(action: onClearSearch) {
+                        Text("Cancel")
+                            .foregroundColor(.blue)
+                            .padding(.trailing, 10)
+                    }
                 }
             }
         }
