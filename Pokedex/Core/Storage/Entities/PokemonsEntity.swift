@@ -10,10 +10,11 @@ import SwiftData
 
 @Model
 class PokemonsEntity: Hashable {
+    var id: Int
     var name: String
     var url: String
-    var id: Int
     var imageURL: String?
+    var imageShinyURL: String?
     @Relationship(deleteRule: .cascade, inverse: \PokemonTypeEntity.pokemon)
     var types: [PokemonTypeEntity] = []
 
@@ -22,12 +23,14 @@ class PokemonsEntity: Hashable {
         url: String,
         id: Int,
         imageURL: String?,
+        imageShinyURL: String?,
         types: [PokemonType]
     ) {
         self.name = name
         self.url = url
         self.id = id
         self.imageURL = imageURL
+        self.imageShinyURL = imageShinyURL
         self.types = types.map {
             PokemonTypeEntity(
                 slot: $0.slot,

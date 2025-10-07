@@ -45,6 +45,7 @@ final class PokemonRepository {
                 url: result.url,
                 id: pokemonDetail.id,
                 imageURL: pokemonDetail.imageURL,
+                imageShinyURL: pokemonDetail.imageShinyURL,
                 types: pokemonDetail.types
             )
 
@@ -68,7 +69,7 @@ final class PokemonRepository {
         return try context.fetch(descriptor)
     }
 
-    private func getData<T: Decodable>(
+    func getData<T: Decodable>(
         from urlString: String,
         type: T.Type
     ) async throws -> T {
@@ -84,5 +85,26 @@ final class PokemonRepository {
         }
 
         return try jsonDecoder.decode(T.self, from: data)
+    }
+
+    func updateComponentProperty<T>(
+        componentType: T.Type,
+        propertyKey: WritableKeyPath<T, String?>,
+        fetchURL: @escaping (T) -> String,
+        fetchProperty: @escaping (String) async throws -> String
+    ) async throws -> [T] where T: PersistentModel {
+        let descriptor = FetchDescriptor<T>()
+        let localComponents = try context.fetch(descriptor)
+        let componentsToUpdate = localComponents.filter {
+            $0[keyPath: propertyKey] == nil
+        }
+        for component in componentsToUpdate {
+            var mutableComponent = component
+            let url = fetchURL(mutableComponent)
+            let propertyValue: String = try await fetchProperty(url)
+            mutableComponent[keyPath: propertyKey] = propertyValue
+        }
+        try context.save()
+        return try context.fetch(descriptor)
     }
 }

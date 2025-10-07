@@ -29,7 +29,7 @@ class ListVM: ObservableObject {
             print("Error fetching pokemons: \(error.localizedDescription)")
         }
     }
-    
+
     func formatID(_ id: Int) -> String {
         return String(format: "%04d", id)
     }
@@ -52,5 +52,30 @@ class ListVM: ObservableObject {
     func clearSearch() {
         filteredPokemons = pokemon
         isSearching = false
+    }
+
+    func updatePokemonPropertyIfNeeded(pokemon: PokemonsEntity) async {
+        if pokemon.imageShinyURL == nil {
+            do {
+                try await repository.updateComponentProperty(
+                    componentType: PokemonsEntity.self,
+                    propertyKey: \PokemonsEntity.imageShinyURL,
+                    fetchURL: { $0.url },
+                    fetchProperty: { url in
+                        let pokemonDetail: PokemonDetail =
+                            try await self.repository.getData(
+                                from: url,
+                                type: PokemonDetail.self
+                            )
+                        let imageShinyURL = pokemonDetail.imageShinyURL ?? ""
+                        return imageShinyURL
+                    }
+                )
+            } catch {
+                print(
+                    "Error updating shiny image for \(pokemon.name): \(error.localizedDescription)"
+                )
+            }
+        }
     }
 }

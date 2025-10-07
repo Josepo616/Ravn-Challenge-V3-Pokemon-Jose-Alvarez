@@ -38,6 +38,7 @@ struct PokemonDetail: Decodable, Hashable {
     let id: Int
     let name: String
     let imageURL: String?
+    let imageShinyURL: String?
     let types: [PokemonType]
 
     enum CodingKeys: String, CodingKey {
@@ -53,6 +54,7 @@ struct PokemonDetail: Decodable, Hashable {
         id = try container.decode(Int.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         imageURL = sprites.other?.home?.frontDefault
+        imageShinyURL = sprites.other?.home?.frontShiny
         types = try container.decode([PokemonType].self, forKey: .types)
     }
 }
@@ -75,9 +77,11 @@ struct OtherSprites: Decodable, Hashable {
 
 struct HomeSprites: Decodable, Hashable {
     let frontDefault: String?
+    let frontShiny: String?
 
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"
+        case frontShiny = "front_shiny"
     }
 }
 

@@ -13,22 +13,24 @@ struct ContentView: View {
     @State private var searchQuery: String = ""
 
     var body: some View {
-        VStack(spacing: 0) {
-            SearchHeaderView(
-                searchQuery: $searchQuery,
-                isSearching: $listVM.isSearching,
-                onSearchChange: handleSearchChange,
-                onClearSearch: clearSearch
-            )
-
-            PokemonListView(
-                isSearching: $listVM.isSearching,
-                pokemons: listVM.filteredPokemons,
-                listVM: listVM
-            )
-        }
-        .task {
-            await listVM.fetchPokemons()
+        NavigationStack {
+            VStack(spacing: 0) {
+                SearchHeaderView(
+                    searchQuery: $searchQuery,
+                    isSearching: $listVM.isSearching,
+                    onSearchChange: handleSearchChange,
+                    onClearSearch: clearSearch
+                )
+                
+                PokemonListView(
+                    isSearching: $listVM.isSearching,
+                    pokemons: listVM.filteredPokemons,
+                    listVM: listVM
+                )
+            }
+            .task {
+                await listVM.fetchPokemons()
+            }
         }
     }
 

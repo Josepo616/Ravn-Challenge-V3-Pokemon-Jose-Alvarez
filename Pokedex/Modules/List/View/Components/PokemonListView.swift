@@ -19,21 +19,26 @@ struct PokemonListView: View {
                     .listRowSeparator(.hidden)
             } else {
                 ForEach(pokemons, id: \.self) { pokemon in
-                    PokemonRowView(pokemon: pokemon, listVM: listVM)
-                        .listRowInsets(
-                            EdgeInsets(
-                                top: 4,
-                                leading: 16,
-                                bottom: 4,
-                                trailing: 16
+                    NavigationLink(
+                        destination: PokemonDetailView(pokemon: pokemon, viewModel: listVM)
+                    ) {
+                        PokemonRowView(pokemon: pokemon, listVM: listVM)
+                            .listRowInsets(
+                                EdgeInsets(
+                                    top: 4,
+                                    leading: 16,
+                                    bottom: 4,
+                                    trailing: 16
+                                )
                             )
-                        )
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.systemGray6))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                        )
+                            .listRowBackground(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.systemGray6))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
                 .listRowSeparator(.hidden)
             }
