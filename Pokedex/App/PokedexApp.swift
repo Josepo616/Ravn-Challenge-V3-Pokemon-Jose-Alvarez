@@ -11,7 +11,7 @@ import SwiftData
 @main
 struct PokedexApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([PokemonEntity.self, PokedexEntity.self])
+        let schema = Schema([PokemonsEntity.self, PokedexEntity.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         return try! ModelContainer(for: schema, configurations: [config])
     }()

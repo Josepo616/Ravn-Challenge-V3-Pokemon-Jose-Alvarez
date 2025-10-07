@@ -20,7 +20,7 @@ struct PokedexResponse: Decodable, Hashable {
     let next: String
     let previous: String?
     let results: [Pokedex]
-    
+
     enum CodingKeys: String, CodingKey {
         case count
         case next
@@ -34,12 +34,69 @@ struct Pokedex: Decodable, Hashable {
     let url: String
 }
 
-struct Pokemon: Decodable, Hashable {
+struct PokemonDetail: Decodable, Hashable {
     let id: Int
     let name: String
-    
+    let imageURL: String?
+    let types: [PokemonType]
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
+        case sprites
+        case types
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let sprites = try container.decode(Sprites.self, forKey: .sprites)
+        id = try container.decode(Int.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        imageURL = sprites.other?.home?.frontDefault
+        types = try container.decode([PokemonType].self, forKey: .types)
+    }
+}
+
+struct Sprites: Decodable, Hashable {
+    let other: OtherSprites?
+
+    enum CodingKeys: String, CodingKey {
+        case other
+    }
+}
+
+struct OtherSprites: Decodable, Hashable {
+    let home: HomeSprites?
+
+    enum CodingKeys: String, CodingKey {
+        case home
+    }
+}
+
+struct HomeSprites: Decodable, Hashable {
+    let frontDefault: String?
+
+    enum CodingKeys: String, CodingKey {
+        case frontDefault = "front_default"
+    }
+}
+
+struct PokemonType: Decodable, Hashable {
+    let slot: Int
+    let type: TypeDetails
+
+    enum CodingKeys: String, CodingKey {
+        case slot
+        case type
+    }
+}
+
+struct TypeDetails: Decodable, Hashable {
+    let name: String
+    let url: String
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case url
     }
 }

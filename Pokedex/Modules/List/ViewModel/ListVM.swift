@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class ListVM: ObservableObject {
-    @Published private(set) var pokemon: [PokemonEntity] = []
+    @Published private(set) var pokemon: [PokemonsEntity] = []
     @Published private(set) var pokedex: [PokedexEntity] = []
     private let repository: PokemonRepository
 
@@ -23,8 +23,11 @@ class ListVM: ObservableObject {
             self.pokemon = try await repository.fetchAndStorePokemons()
             self.pokemon.sort { $0.id < $1.id }
         } catch {
-            print("Error al obtener pokemons: \(error.localizedDescription)")
+            print("Error fetching pokemons: \(error.localizedDescription)")
         }
     }
+    
+    func formatID(_ id: Int) -> String {
+        return String(format: "%04d", id)
+    }
 }
-

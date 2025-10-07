@@ -17,8 +17,8 @@ final class PokemonRepository {
         self.context = context
     }
 
-    func fetchAndStorePokemons() async throws -> [PokemonEntity] {
-        let descriptor = FetchDescriptor<PokemonEntity>()
+    func fetchAndStorePokemons() async throws -> [PokemonsEntity] {
+        let descriptor = FetchDescriptor<PokemonsEntity>()
         let localPokemons = try context.fetch(descriptor)
 
         if !localPokemons.isEmpty {
@@ -35,7 +35,19 @@ final class PokemonRepository {
         )
 
         for result in response.results {
-            let newPokemon = PokemonEntity(name: result.name, url: result.url)
+            let pokemonDetail: PokemonDetail = try await getData(
+                from: result.url,
+                type: PokemonDetail.self
+            )
+
+            let newPokemon = PokemonsEntity(
+                name: result.name,
+                url: result.url,
+                id: pokemonDetail.id,
+                imageURL: pokemonDetail.imageURL,
+                types: pokemonDetail.types
+            )
+
             context.insert(newPokemon)
         }
 
