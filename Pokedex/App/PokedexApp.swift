@@ -16,13 +16,17 @@ struct PokedexApp: App {
         return try! ModelContainer(for: schema, configurations: [config])
     }()
 
+    @StateObject private var listVM: ListVM
+
+    init() {
+        let context = sharedModelContainer.mainContext
+        let repository = PokemonRepository(context: context)
+        _listVM = StateObject(wrappedValue: ListVM(repository: repository))
+    }
+
     var body: some Scene {
         WindowGroup {
-            let context = sharedModelContainer.mainContext
-            let repository = PokemonRepository(context: context)
-            let viewModel = ListVM(repository: repository)
-
-            ContentView(listVM: viewModel)
+            MainList(listVM: listVM)
         }
         .modelContainer(sharedModelContainer)
     }

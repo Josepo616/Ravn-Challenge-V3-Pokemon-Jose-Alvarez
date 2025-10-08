@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct PokemonDetailView: View {
-    @StateObject var viewModel: ListVM
     @State private var generationFixed = ""
     @State private var nextEvolution: PokemonsEntity?
     @State private var selectedTab = 0
     let pokemon: PokemonsEntity
+    var viewModel: ListVM
 
     var body: some View {
         ScrollView(showsIndicators: false) {

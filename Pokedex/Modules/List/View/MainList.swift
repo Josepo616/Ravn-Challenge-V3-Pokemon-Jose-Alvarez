@@ -8,7 +8,7 @@
 import SwiftData
 import SwiftUI
 
-struct ContentView: View {
+struct MainList: View {
     @StateObject var listVM: ListVM
     @State private var searchQuery: String = ""
 

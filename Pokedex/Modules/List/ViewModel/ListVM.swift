@@ -13,6 +13,9 @@ class ListVM: ObservableObject {
     @Published private(set) var pokedex: [PokedexEntity] = []
     @Published var filteredPokemons: [PokemonsEntity] = []
     @Published var isSearching: Bool = false
+    @Published private(set) var offset: Int = 0
+    private let limit: Int = 20
+    private var isFetchingMore: Bool = false
     private let repository: PokemonRepository
     
     init(repository: PokemonRepository) {
@@ -20,6 +23,8 @@ class ListVM: ObservableObject {
     }
     
     func fetchPokemons() async {
+        if !self.pokemon.isEmpty { return }
+
         do {
             self.pokedex = try repository.fetchPokedexMetadata()
             self.pokemon = try await repository.fetchAndStorePokemons()
@@ -62,6 +67,34 @@ class ListVM: ObservableObject {
             print("Error fetching Pokémon named \(name): \(error.localizedDescription)")
             return nil
         }
+    }
+    
+    func loadMorePokemons() async {
+        guard !isFetchingMore else { return }
+
+        isFetchingMore = true
+
+        try? await Task.sleep(nanoseconds: 1_000_000_000) // opcional: simula carga
+
+        offset += limit
+
+        do {
+            let newPokemons = try await repository.fetchAndStorePokemons(offset: offset, limit: limit)
+            let sortedNew = newPokemons.sorted { $0.id < $1.id }
+
+            let newUnique = sortedNew.filter { new in
+                !pokemon.contains(where: { $0.id == new.id })
+            }
+
+            pokemon.append(contentsOf: newUnique)
+            filteredPokemons.append(contentsOf: newUnique)
+
+        } catch {
+            print("Error fetching more Pokémons: \(error.localizedDescription)")
+        }
+
+        isSearching = false
+        isFetchingMore = false
     }
 
 
@@ -135,5 +168,4 @@ class ListVM: ObservableObject {
             }
         }
     }*/
-
 }

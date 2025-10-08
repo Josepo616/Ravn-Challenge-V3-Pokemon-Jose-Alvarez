@@ -17,47 +17,44 @@ final class PokemonRepository {
         self.context = context
     }
 
-    func fetchAndStorePokemons() async throws -> [PokemonsEntity] {
-        let descriptor = FetchDescriptor<PokemonsEntity>()
+    func fetchAndStorePokemons(offset: Int = 0, limit: Int = 20) async throws -> [PokemonsEntity] {
+        let descriptor = FetchDescriptor<PokemonsEntity>(
+            predicate: #Predicate { $0.id > offset && $0.id <= offset + limit }
+        )
+
         let localPokemons = try context.fetch(descriptor)
 
-        if !localPokemons.isEmpty {
-            return localPokemons
+        if localPokemons.count == limit {
+            return localPokemons.sorted { $0.id < $1.id }
         }
 
         let pokemonAPI = PokeApiService(
             endpoint: .pokemon,
-            parameter: ["offset": "0", "limit": "20"]
+            parameter: ["limit": "\(limit)", "offset": "\(offset)"]
         )
+
         let response: PokedexResponse = try await getData(
             from: pokemonAPI.url.absoluteString,
             type: PokedexResponse.self
         )
+
+        var newPokemons: [PokemonsEntity] = []
 
         for result in response.results {
             let pokemonDetail: PokemonDetail = try await getData(
                 from: result.url,
                 type: PokemonDetail.self
             )
-            
+
+
             let speciesDetail: PokemonSpeciesDetail = try await getData(
                 from: pokemonDetail.species.url,
                 type: PokemonSpeciesDetail.self
             )
-            
-            let color = speciesDetail.color.name
-            let generation = speciesDetail.generation.name
-            let flavorText = speciesDetail.englishFlavorText
 
-            
             let evolutionChain: EvolutionChainResponse = try await getData(
                 from: speciesDetail.evolutionChain.url,
                 type: EvolutionChainResponse.self
-            )
-            
-            let nextEvolution = NextEvolution(
-                from: evolutionChain.chain,
-                currentPokemonName: pokemonDetail.name
             )
 
             let newPokemon = PokemonsEntity(
@@ -66,26 +63,37 @@ final class PokemonRepository {
                 id: pokemonDetail.id,
                 imageURL: pokemonDetail.imageURL,
                 imageShinyURL: pokemonDetail.imageShinyURL,
-                color: color,
-                generation: generation,
-                flavorText: flavorText,
+                color: speciesDetail.color.name,
+                generation: speciesDetail.generation.name,
+                flavorText: speciesDetail.englishFlavorText,
                 types: pokemonDetail.types,
-                nextEvolution: nextEvolution
+                nextEvolution: NextEvolution(
+                    from: evolutionChain.chain,
+                    currentPokemonName: pokemonDetail.name
+                )
             )
-            
+
             context.insert(newPokemon)
+            newPokemons.append(newPokemon)
         }
 
-        let pokedex = PokedexEntity(
-            count: response.count,
-            next: response.next,
-            previous: response.previous ?? "nil"
-        )
-        context.insert(pokedex)
+        let existingPokedex = try context.fetchCount(FetchDescriptor<PokedexEntity>())
+        if existingPokedex == 0 {
+            let pokedex = PokedexEntity(
+                count: response.count,
+                next: response.next,
+                previous: response.previous ?? "nil"
+            )
+            context.insert(pokedex)
+        }
 
         try context.save()
 
-        return try context.fetch(descriptor)
+        let allDescriptor = FetchDescriptor<PokemonsEntity>(
+            predicate: #Predicate { $0.id > offset && $0.id <= offset + limit }
+        )
+
+        return try context.fetch(allDescriptor).sorted { $0.id < $1.id }
     }
 
     func fetchPokedexMetadata() throws -> [PokedexEntity] {
@@ -102,8 +110,6 @@ final class PokemonRepository {
         let results = try context.fetch(descriptor)
         return results.first
     }
-
-
 
     func getData<T: Decodable>(
         from urlString: String,

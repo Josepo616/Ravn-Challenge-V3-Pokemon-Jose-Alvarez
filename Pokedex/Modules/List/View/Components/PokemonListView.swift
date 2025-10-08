@@ -21,8 +21,8 @@ struct PokemonListView: View {
                 ForEach(pokemons, id: \.self) { pokemon in
                     NavigationLink(
                         destination: PokemonDetailView(
-                            viewModel: listVM,
-                            pokemon: pokemon
+                            pokemon: pokemon,
+                            viewModel: listVM
                         )
                         .toolbarRole(.editor)
                     ) {
@@ -41,6 +41,13 @@ struct PokemonListView: View {
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
                             )
+                            .onAppear {
+                                if pokemon == pokemons.last {
+                                    Task {
+                                        await listVM.loadMorePokemons()
+                                    }
+                                }
+                            }
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -48,6 +55,7 @@ struct PokemonListView: View {
             }
         }
         .listStyle(.plain)
+
         if isSearching {
             ZStack {
                 Color.white.opacity(0.5)
