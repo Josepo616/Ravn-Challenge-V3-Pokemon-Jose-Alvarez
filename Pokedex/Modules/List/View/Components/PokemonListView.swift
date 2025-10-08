@@ -20,7 +20,11 @@ struct PokemonListView: View {
             } else {
                 ForEach(pokemons, id: \.self) { pokemon in
                     NavigationLink(
-                        destination: PokemonDetailView(viewModel: listVM, pokemon: pokemon)
+                        destination: PokemonDetailView(
+                            viewModel: listVM,
+                            pokemon: pokemon
+                        )
+                        .toolbarRole(.editor)
                     ) {
                         PokemonRowView(pokemon: pokemon, listVM: listVM)
                             .listRowInsets(
@@ -44,7 +48,6 @@ struct PokemonListView: View {
             }
         }
         .listStyle(.plain)
-        .scrollContentBackground(.hidden)
         if isSearching {
             ZStack {
                 Color.white.opacity(0.5)

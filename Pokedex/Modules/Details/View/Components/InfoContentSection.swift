@@ -1,0 +1,49 @@
+//
+//  InfoContentSection.swift
+//  Pokedex
+//
+//  Created by JoseAlvarez on 10/8/25.
+//
+
+import SwiftUI
+
+struct InfoContentSection: View {
+    let viewModel: ListVM
+    let pokemon: PokemonsEntity
+    let generationFixed: String
+    let nextEvolution: PokemonsEntity?
+    
+    var body: some View {
+        VStack(spacing: 0.0000001) {
+                Text("#\(viewModel.formatID(pokemon.id)) \(pokemon.name.capitalized)")
+                    .font(.system(size: 28))
+                    .padding(.bottom, -50)
+                TypeTagsSection(pokemon: pokemon)
+                .padding(.bottom, -30)
+
+                Text(generationFixed)
+                    .font(.system(size: 17))
+                    .padding(.bottom, 10)
+
+                Text(pokemon.flavorText ?? "No description")
+                    .font(.system(size: 15))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 10)
+            
+                if nextEvolution != nil {
+                    Divider()
+                        .frame(height: 1)
+                        .background(Color.gray)
+                        .padding(.vertical, 8)
+                    
+                    EvolutionSection(
+                        viewModel: viewModel,
+                        pokemon: pokemon,
+                        nextEvolution: nextEvolution
+                    )
+                }
+            }
+        .cornerRadius(30, corners: [.topLeft, .topRight])
+    }
+}
