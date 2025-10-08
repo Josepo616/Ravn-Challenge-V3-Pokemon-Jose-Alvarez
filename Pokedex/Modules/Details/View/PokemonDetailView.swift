@@ -20,8 +20,9 @@ struct PokemonDetailView: View {
         VStack {
             Text(pokemon.name)
                 .font(.largeTitle)
+            Text(pokemon.nextEvolutionName ?? "No evolves")
             
-            if let imageURL = pokemon.imageShinyURL, !imageURL.isEmpty {
+            if let imageURL = pokemon.imageURL, !imageURL.isEmpty {
                 AsyncImage(url: URL(string: imageURL)) { phase in
                     switch phase {
                     case .success(let image):
@@ -38,11 +39,21 @@ struct PokemonDetailView: View {
                 Text("No image available")
                     .foregroundColor(.gray)
             }
+            HStack {
+                ForEach(pokemon.types.sorted(by: { $0.slot < $1.slot }), id: \.self) {
+                    type in
+                    Image(type.typeName.capitalized + "Bar")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                }
+            }
         }
+        .background(Color((pokemon.color ?? "").capitalized))
         .onAppear {
+            //pokemon.evolvesTo = nil
             Task {
-                // Llamamos al método de actualización antes de mostrar la vista.
-                await viewModel.updatePokemonPropertyIfNeeded(pokemon: pokemon)
+                //await viewModel.updatePokemonPropertiesIfNeeded(pokemon: pokemon)
             }
         }
         .navigationTitle("Pokemon Info")

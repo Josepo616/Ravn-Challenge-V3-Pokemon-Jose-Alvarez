@@ -40,12 +40,14 @@ struct PokemonDetail: Decodable, Hashable {
     let imageURL: String?
     let imageShinyURL: String?
     let types: [PokemonType]
+    let species: PokemonSpecies
 
     enum CodingKeys: String, CodingKey {
         case id
         case name
         case sprites
         case types
+        case species
     }
 
     init(from decoder: Decoder) throws {
@@ -56,6 +58,7 @@ struct PokemonDetail: Decodable, Hashable {
         imageURL = sprites.other?.home?.frontDefault
         imageShinyURL = sprites.other?.home?.frontShiny
         types = try container.decode([PokemonType].self, forKey: .types)
+        species = try container.decode(PokemonSpecies.self, forKey: .species)
     }
 }
 
@@ -102,5 +105,68 @@ struct TypeDetails: Decodable, Hashable {
     enum CodingKeys: String, CodingKey {
         case name
         case url
+    }
+}
+
+struct PokemonSpecies: Decodable, Hashable {
+    let name: String
+    let url: String
+}
+
+struct PokemonSpeciesDetail: Decodable {
+    let color: ColorNameReference
+    let evolutionChain: EvolutionChainReference
+    
+    enum CodingKeys: String, CodingKey {
+        case color
+        case evolutionChain = "evolution_chain"
+    }
+}
+
+struct ColorNameReference: Decodable {
+    let name: String
+}
+
+struct EvolutionChainReference: Decodable {
+    let url: String
+}
+
+struct EvolutionChainResponse: Decodable {
+    let id: Int
+    let chain: ChainLink
+}
+
+struct ChainLink: Decodable {
+    let species: PokemonSpecies
+    let evolvesTo: [ChainLink]
+    
+    enum CodingKeys: String, CodingKey {
+        case species
+        case evolvesTo = "evolves_to"
+    }
+}
+
+struct NextEvolution: Hashable {
+    let name: String
+    let url: String
+    
+    init?(from chain: ChainLink, currentPokemonName: String) {
+        if chain.species.name == currentPokemonName {
+            if let nextEvolution = chain.evolvesTo.first {
+                self.name = nextEvolution.species.name
+                self.url = nextEvolution.species.url
+                return
+            }
+            return nil
+        }
+        
+        for evolution in chain.evolvesTo {
+            if let result = NextEvolution(from: evolution, currentPokemonName: currentPokemonName) {
+                self = result
+                return
+            }
+        }
+        
+        return nil
     }
 }

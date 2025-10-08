@@ -18,7 +18,6 @@ struct PokemonInfoView: View {
                 .font(.headline)
             Text("#\(listVM.formatID(id))")
                 .font(.subheadline)
-                .foregroundColor(.gray)
         }
     }
 }

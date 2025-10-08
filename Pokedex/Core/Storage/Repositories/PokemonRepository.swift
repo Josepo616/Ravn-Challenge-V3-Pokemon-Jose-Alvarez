@@ -35,9 +35,31 @@ final class PokemonRepository {
         )
 
         for result in response.results {
+            // 1. Obtener detalles del Pokémon
             let pokemonDetail: PokemonDetail = try await getData(
                 from: result.url,
                 type: PokemonDetail.self
+            )
+            
+            // 2. Obtener detalles de la especie
+            let speciesDetail: PokemonSpeciesDetail = try await getData(
+                from: pokemonDetail.species.url,
+                type: PokemonSpeciesDetail.self
+            )
+            
+            let color = speciesDetail.color.name
+
+            
+            // 3. Obtener la cadena evolutiva
+            let evolutionChain: EvolutionChainResponse = try await getData(
+                from: speciesDetail.evolutionChain.url,
+                type: EvolutionChainResponse.self
+            )
+            
+            // 4. Extraer solo la siguiente evolución
+            let nextEvolution = NextEvolution(
+                from: evolutionChain.chain,
+                currentPokemonName: pokemonDetail.name
             )
 
             let newPokemon = PokemonsEntity(
@@ -46,9 +68,11 @@ final class PokemonRepository {
                 id: pokemonDetail.id,
                 imageURL: pokemonDetail.imageURL,
                 imageShinyURL: pokemonDetail.imageShinyURL,
-                types: pokemonDetail.types
+                color: color,
+                types: pokemonDetail.types,
+                nextEvolution: nextEvolution
             )
-
+            
             context.insert(newPokemon)
         }
 
