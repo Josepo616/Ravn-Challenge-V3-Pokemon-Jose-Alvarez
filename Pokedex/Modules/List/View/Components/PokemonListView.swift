@@ -20,7 +20,7 @@ struct PokemonListView: View {
             } else {
                 ForEach(pokemons, id: \.self) { pokemon in
                     NavigationLink(
-                        destination: PokemonDetailView(pokemon: pokemon, viewModel: listVM)
+                        destination: PokemonDetailView(viewModel: listVM, pokemon: pokemon)
                     ) {
                         PokemonRowView(pokemon: pokemon, listVM: listVM)
                             .listRowInsets(

@@ -18,6 +18,8 @@ class PokemonsEntity: Hashable {
     var nextEvolutionName: String?
     var nextEvolutionURL: String?
     var color: String?
+    var generation: String?
+    var flavorText: String?
     @Relationship(deleteRule: .cascade, inverse: \PokemonTypeEntity.pokemon)
     var types: [PokemonTypeEntity] = []
 
@@ -28,6 +30,8 @@ class PokemonsEntity: Hashable {
         imageURL: String?,
         imageShinyURL: String?,
         color: String,
+        generation: String?,
+        flavorText: String?,
         types: [PokemonType],
         nextEvolution: NextEvolution?
     ) {
@@ -37,6 +41,8 @@ class PokemonsEntity: Hashable {
         self.imageURL = imageURL
         self.imageShinyURL = imageShinyURL
         self.color = color
+        self.generation = generation
+        self.flavorText = flavorText
         self.nextEvolutionName = nextEvolution?.name
         self.nextEvolutionURL = nextEvolution?.url
 

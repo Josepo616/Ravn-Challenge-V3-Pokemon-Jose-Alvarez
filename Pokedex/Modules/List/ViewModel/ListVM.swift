@@ -53,6 +53,17 @@ class ListVM: ObservableObject {
         filteredPokemons = pokemon
         isSearching = false
     }
+    
+    func fetchPokemon(by name: String) async -> PokemonsEntity? {
+        do {
+            let pokemon = try await repository.fetchPokemon(by: name)
+            return pokemon
+        } catch {
+            print("Error fetching Pokémon named \(name): \(error.localizedDescription)")
+            return nil
+        }
+    }
+
 
     /*func updatePokemonPropertiesIfNeeded(pokemon: PokemonsEntity) async {
         let propertiesToUpdate: [

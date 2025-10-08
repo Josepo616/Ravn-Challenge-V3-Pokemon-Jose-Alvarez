@@ -35,28 +35,26 @@ final class PokemonRepository {
         )
 
         for result in response.results {
-            // 1. Obtener detalles del Pokémon
             let pokemonDetail: PokemonDetail = try await getData(
                 from: result.url,
                 type: PokemonDetail.self
             )
             
-            // 2. Obtener detalles de la especie
             let speciesDetail: PokemonSpeciesDetail = try await getData(
                 from: pokemonDetail.species.url,
                 type: PokemonSpeciesDetail.self
             )
             
             let color = speciesDetail.color.name
+            let generation = speciesDetail.generation.name
+            let flavorText = speciesDetail.englishFlavorText
 
             
-            // 3. Obtener la cadena evolutiva
             let evolutionChain: EvolutionChainResponse = try await getData(
                 from: speciesDetail.evolutionChain.url,
                 type: EvolutionChainResponse.self
             )
             
-            // 4. Extraer solo la siguiente evolución
             let nextEvolution = NextEvolution(
                 from: evolutionChain.chain,
                 currentPokemonName: pokemonDetail.name
@@ -69,6 +67,8 @@ final class PokemonRepository {
                 imageURL: pokemonDetail.imageURL,
                 imageShinyURL: pokemonDetail.imageShinyURL,
                 color: color,
+                generation: generation,
+                flavorText: flavorText,
                 types: pokemonDetail.types,
                 nextEvolution: nextEvolution
             )
@@ -92,6 +92,18 @@ final class PokemonRepository {
         let descriptor = FetchDescriptor<PokedexEntity>()
         return try context.fetch(descriptor)
     }
+    
+    func fetchPokemon(by name: String) throws -> PokemonsEntity? {
+        var descriptor = FetchDescriptor<PokemonsEntity>(
+            predicate: #Predicate { $0.name == name }
+        )
+        descriptor.fetchLimit = 1
+
+        let results = try context.fetch(descriptor)
+        return results.first
+    }
+
+
 
     func getData<T: Decodable>(
         from urlString: String,

@@ -116,14 +116,49 @@ struct PokemonSpecies: Decodable, Hashable {
 struct PokemonSpeciesDetail: Decodable {
     let color: ColorNameReference
     let evolutionChain: EvolutionChainReference
+    let generation: GenerationNameReference
+    let flavorTextEntries:  [FlavorTextEntry]
     
     enum CodingKeys: String, CodingKey {
         case color
+        case generation
         case evolutionChain = "evolution_chain"
+        case flavorTextEntries = "flavor_text_entries"
+    }
+    
+    var englishFlavorText: String? {
+        return flavorTextEntries.first(where: { $0.language.name == "en" })?.cleanedFlavorText
     }
 }
 
+struct FlavorTextEntry: Decodable {
+    let flavorText: String
+    let language: FlavorResponse
+    
+    enum CodingKeys: String, CodingKey {
+        case flavorText = "flavor_text"
+        case language
+    }
+    
+    var cleanedFlavorText: String {
+        flavorText
+            .replacingOccurrences(of: "\n", with: " ")
+            //.replacingOccurrences(of: "\f", with: " ")
+            .replacingOccurrences(of: "\r", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+struct FlavorResponse: Decodable {
+    let name: String
+    let url: String
+}
+
 struct ColorNameReference: Decodable {
+    let name: String
+}
+
+struct GenerationNameReference: Decodable {
     let name: String
 }
 
