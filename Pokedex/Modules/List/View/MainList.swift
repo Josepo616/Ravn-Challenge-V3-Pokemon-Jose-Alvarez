@@ -14,19 +14,21 @@ struct MainList: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                SearchHeaderView(
-                    searchQuery: $searchQuery,
-                    isSearching: $listVM.isSearching,
-                    onSearchChange: handleSearchChange,
-                    onClearSearch: clearSearch
-                )
-                
-                PokemonListView(
-                    isSearching: $listVM.isSearching,
-                    pokemons: listVM.filteredPokemons,
-                    listVM: listVM
-                )
+            ZStack {
+                VStack(spacing: 0) {
+                    SearchHeaderView(
+                        searchQuery: $searchQuery,
+                        isSearching: $listVM.isSearching,
+                        onSearchChange: handleSearchChange,
+                        onClearSearch: clearSearch
+                    )
+
+                    PokemonListView(
+                        isSearching: $listVM.isSearching,
+                        pokemons: listVM.filteredPokemons,
+                        listVM: listVM
+                    )
+                }
             }
             .task {
                 await listVM.fetchPokemons()

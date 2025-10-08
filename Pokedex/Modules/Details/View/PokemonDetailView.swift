@@ -16,7 +16,7 @@ struct PokemonDetailView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack() {
+            VStack {
                 ZStack {
                     Color(pokemon.color?.capitalized ?? "")
                         .frame(height: 300)
@@ -40,7 +40,8 @@ struct PokemonDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if let generation = pokemon.generation {
-                generationFixed = generation
+                generationFixed =
+                    generation
                     .components(separatedBy: "-")
                     .map { $0.capitalized }
                     .joined(separator: " ")
@@ -55,7 +56,9 @@ struct PokemonDetailView: View {
     }
 
     private func loadNextEvolution() async {
-        guard let evolutionName = pokemon.nextEvolutionName, !evolutionName.isEmpty else { return }
+        guard let evolutionName = pokemon.nextEvolutionName,
+            !evolutionName.isEmpty
+        else { return }
         nextEvolution = await viewModel.fetchPokemon(by: evolutionName)
     }
 }

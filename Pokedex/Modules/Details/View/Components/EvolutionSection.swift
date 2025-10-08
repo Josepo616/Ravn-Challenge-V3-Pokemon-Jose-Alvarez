@@ -13,7 +13,7 @@ struct EvolutionSection: View {
     let nextEvolution: PokemonsEntity?
 
     var body: some View {
-        VStack() {
+        VStack {
             Text("Evolutions")
                 .font(.system(size: 22))
                 .padding(.top, 8)
@@ -50,7 +50,9 @@ struct EvolutionSection: View {
     }
 
     @ViewBuilder
-    private func pokemonEvolutionImageSection(for pokemon: PokemonsEntity) -> some View {
+    private func pokemonEvolutionImageSection(for pokemon: PokemonsEntity)
+        -> some View
+    {
         if let imageURL = pokemon.imageURL, !imageURL.isEmpty {
             ZStack {
                 Ellipse()

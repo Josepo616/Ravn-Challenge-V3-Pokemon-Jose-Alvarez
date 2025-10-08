@@ -13,7 +13,7 @@ class PokedexEntity: Hashable {
     var count: Int
     var next: String
     var previous: String?
-    
+
     init(count: Int, next: String, previous: String) {
         self.count = count
         self.next = next
@@ -21,9 +21,8 @@ class PokedexEntity: Hashable {
     }
 
     static func == (lhs: PokedexEntity, rhs: PokedexEntity) -> Bool {
-        return lhs.count == rhs.count &&
-               lhs.next == rhs.next &&
-               lhs.previous == rhs.previous
+        return lhs.count == rhs.count && lhs.next == rhs.next
+            && lhs.previous == rhs.previous
     }
 
     func hash(into hasher: inout Hasher) {

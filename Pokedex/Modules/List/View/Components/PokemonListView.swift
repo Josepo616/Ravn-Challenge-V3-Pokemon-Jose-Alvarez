@@ -13,48 +13,35 @@ struct PokemonListView: View {
     let listVM: ListVM
 
     var body: some View {
-        List {
-            if pokemons.isEmpty {
-                EmptyStateView()
-                    .listRowSeparator(.hidden)
-            } else {
-                ForEach(pokemons, id: \.self) { pokemon in
-                    NavigationLink(
-                        destination: PokemonDetailView(
-                            pokemon: pokemon,
-                            viewModel: listVM
-                        )
-                        .toolbarRole(.editor)
-                    ) {
-                        PokemonRowView(pokemon: pokemon, listVM: listVM)
-                            .listRowInsets(
-                                EdgeInsets(
-                                    top: 4,
-                                    leading: 16,
-                                    bottom: 4,
-                                    trailing: 16
-                                )
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                if pokemons.isEmpty {
+                    EmptyStateView()
+                } else {
+                    ForEach(pokemons, id: \.self) { pokemon in
+                        NavigationLink(
+                            destination: PokemonDetailView(
+                                pokemon: pokemon,
+                                viewModel: listVM
                             )
-                            .listRowBackground(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(.systemGray6))
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                            )
-                            .onAppear {
-                                if pokemon == pokemons.last {
-                                    Task {
-                                        await listVM.loadMorePokemons()
-                                    }
+                            .toolbarRole(.editor)
+                        ) {
+                            PokemonRowView(pokemon: pokemon, listVM: listVM)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .onAppear {
+                            if pokemon == pokemons.last {
+                                Task {
+                                    await listVM.loadMorePokemons()
                                 }
                             }
+                        }
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
-                .listRowSeparator(.hidden)
             }
+            .padding(.horizontal, 16)
         }
-        .listStyle(.plain)
+        .background(Color.white)
 
         if isSearching {
             ZStack {

@@ -17,7 +17,9 @@ final class PokemonRepository {
         self.context = context
     }
 
-    func fetchAndStorePokemons(offset: Int = 0, limit: Int = 20) async throws -> [PokemonsEntity] {
+    func fetchAndStorePokemons(offset: Int = 0, limit: Int = 50) async throws
+        -> [PokemonsEntity]
+    {
         let descriptor = FetchDescriptor<PokemonsEntity>(
             predicate: #Predicate { $0.id > offset && $0.id <= offset + limit }
         )
@@ -45,7 +47,6 @@ final class PokemonRepository {
                 from: result.url,
                 type: PokemonDetail.self
             )
-
 
             let speciesDetail: PokemonSpeciesDetail = try await getData(
                 from: pokemonDetail.species.url,
@@ -77,7 +78,9 @@ final class PokemonRepository {
             newPokemons.append(newPokemon)
         }
 
-        let existingPokedex = try context.fetchCount(FetchDescriptor<PokedexEntity>())
+        let existingPokedex = try context.fetchCount(
+            FetchDescriptor<PokedexEntity>()
+        )
         if existingPokedex == 0 {
             let pokedex = PokedexEntity(
                 count: response.count,
@@ -100,7 +103,7 @@ final class PokemonRepository {
         let descriptor = FetchDescriptor<PokedexEntity>()
         return try context.fetch(descriptor)
     }
-    
+
     func fetchPokemon(by name: String) throws -> PokemonsEntity? {
         var descriptor = FetchDescriptor<PokemonsEntity>(
             predicate: #Predicate { $0.name == name }

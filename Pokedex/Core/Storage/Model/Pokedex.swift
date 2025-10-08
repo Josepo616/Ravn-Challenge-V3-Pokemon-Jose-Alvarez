@@ -8,13 +8,6 @@
 import Foundation
 import SwiftData
 
-/// Represents the main response structure from the Pokémon API.
-///
-/// Contains:
-/// - `count`: The total number of Pokémon available.
-/// - `next`: URL to the next page of results (if available).
-/// - `previous`: URL to the previous page of results (or `nil` if it's the first page).
-/// - `results`: An array of `Pokedex` items, each containing the name and full URL of a Pokémon.
 struct PokedexResponse: Decodable, Hashable {
     let count: Int
     let next: String
@@ -117,33 +110,33 @@ struct PokemonSpeciesDetail: Decodable {
     let color: ColorNameReference
     let evolutionChain: EvolutionChainReference
     let generation: GenerationNameReference
-    let flavorTextEntries:  [FlavorTextEntry]
-    
+    let flavorTextEntries: [FlavorTextEntry]
+
     enum CodingKeys: String, CodingKey {
         case color
         case generation
         case evolutionChain = "evolution_chain"
         case flavorTextEntries = "flavor_text_entries"
     }
-    
+
     var englishFlavorText: String? {
-        return flavorTextEntries.first(where: { $0.language.name == "en" })?.cleanedFlavorText
+        return flavorTextEntries.first(where: { $0.language.name == "en" })?
+            .cleanedFlavorText
     }
 }
 
 struct FlavorTextEntry: Decodable {
     let flavorText: String
     let language: FlavorResponse
-    
+
     enum CodingKeys: String, CodingKey {
         case flavorText = "flavor_text"
         case language
     }
-    
+
     var cleanedFlavorText: String {
         flavorText
             .replacingOccurrences(of: "\n", with: " ")
-            //.replacingOccurrences(of: "\f", with: " ")
             .replacingOccurrences(of: "\r", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -174,7 +167,7 @@ struct EvolutionChainResponse: Decodable {
 struct ChainLink: Decodable {
     let species: PokemonSpecies
     let evolvesTo: [ChainLink]
-    
+
     enum CodingKeys: String, CodingKey {
         case species
         case evolvesTo = "evolves_to"
@@ -184,7 +177,7 @@ struct ChainLink: Decodable {
 struct NextEvolution: Hashable {
     let name: String
     let url: String
-    
+
     init?(from chain: ChainLink, currentPokemonName: String) {
         if chain.species.name == currentPokemonName {
             if let nextEvolution = chain.evolvesTo.first {
@@ -194,14 +187,16 @@ struct NextEvolution: Hashable {
             }
             return nil
         }
-        
+
         for evolution in chain.evolvesTo {
-            if let result = NextEvolution(from: evolution, currentPokemonName: currentPokemonName) {
+            if let result = NextEvolution(
+                from: evolution,
+                currentPokemonName: currentPokemonName
+            ) {
                 self = result
                 return
             }
         }
-        
         return nil
     }
 }

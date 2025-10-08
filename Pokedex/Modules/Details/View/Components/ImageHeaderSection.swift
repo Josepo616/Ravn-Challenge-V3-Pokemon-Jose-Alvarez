@@ -26,7 +26,7 @@ struct ImageHeaderSection: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
 
-            HStack() {
+            HStack {
                 Button(action: { selectedTab = 0 }) {
                     Text("Default Sprite")
                         .font(.system(size: 14))

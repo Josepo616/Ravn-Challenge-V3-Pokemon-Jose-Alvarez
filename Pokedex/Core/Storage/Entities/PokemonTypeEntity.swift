@@ -14,7 +14,6 @@ class PokemonTypeEntity {
     var typeURL: String
     var pokemon: PokemonsEntity?
 
-    
     init(slot: Int, typeName: String, typeURL: String) {
         self.slot = slot
         self.typeName = typeName

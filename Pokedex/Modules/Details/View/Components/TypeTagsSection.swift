@@ -11,8 +11,9 @@ struct TypeTagsSection: View {
     let pokemon: PokemonsEntity
 
     var body: some View {
-        HStack() {
-            ForEach(pokemon.types.sorted(by: { $0.slot < $1.slot }), id: \.self) { type in
+        HStack {
+            ForEach(pokemon.types.sorted(by: { $0.slot < $1.slot }), id: \.self)
+            { type in
                 Image(type.typeName.capitalized + "Bar")
                     .resizable()
                     .scaledToFit()
@@ -21,4 +22,3 @@ struct TypeTagsSection: View {
         }
     }
 }
-
