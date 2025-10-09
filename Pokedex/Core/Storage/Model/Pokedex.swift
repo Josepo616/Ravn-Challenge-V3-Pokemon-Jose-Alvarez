@@ -186,13 +186,9 @@ struct ChainLink: Decodable {
 
 struct EvolutionDetail: Decodable {
     let trigger: Trigger?
-    let minLevel: Int?
-    let heldItem: String?
 
     enum CodingKeys: String, CodingKey {
         case trigger
-        case minLevel = "min_level"
-        case heldItem = "held_item"
     }
 }
 

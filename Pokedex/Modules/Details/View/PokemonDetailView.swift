@@ -36,7 +36,6 @@ struct PokemonDetailView: View {
                 )
             }
         }
-        .scrollDisabled(true)
         .navigationTitle("Pokemon Info")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
