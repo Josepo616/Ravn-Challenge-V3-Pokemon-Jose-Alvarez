@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PokemonDetailView: View {
     @State private var generationFixed = ""
-    @State private var nextEvolution: PokemonsEntity?
+    @State private var nextEvolutions: [PokemonsEntity] = []
     @State private var selectedTab = 0
     let pokemon: PokemonsEntity
     var viewModel: ListVM
@@ -20,6 +20,7 @@ struct PokemonDetailView: View {
                 ZStack {
                     Color(pokemon.color?.capitalized ?? "")
                         .frame(height: 300)
+                        .ignoresSafeArea(edges: .top)
 
                     ImageHeaderSection(
                         selectedTab: $selectedTab,
@@ -31,7 +32,7 @@ struct PokemonDetailView: View {
                     viewModel: viewModel,
                     pokemon: pokemon,
                     generationFixed: generationFixed,
-                    nextEvolution: nextEvolution
+                    nextEvolutions: nextEvolutions
                 )
             }
         }
@@ -40,25 +41,37 @@ struct PokemonDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if let generation = pokemon.generation {
-                generationFixed =
-                    generation
+                generationFixed = generation
                     .components(separatedBy: "-")
-                    .map { $0.capitalized }
+                    .enumerated()
+                    .map { index, element in
+                        return index == 1 ? element.uppercased() : element.capitalized
+                    }
                     .joined(separator: " ")
             } else {
                 generationFixed = "Unknown"
             }
 
             Task {
-                await loadNextEvolution()
+                await loadNextEvolutions()
             }
         }
     }
 
-    private func loadNextEvolution() async {
-        guard let evolutionName = pokemon.nextEvolutionName,
-            !evolutionName.isEmpty
-        else { return }
-        nextEvolution = await viewModel.fetchPokemon(by: evolutionName)
+    private func loadNextEvolutions() async {
+        guard !pokemon.nextEvolutions.isEmpty else { return }
+
+        var evolutionsLoaded: [PokemonsEntity] = []
+
+        for evolution in pokemon.nextEvolutions {
+            let evolutionName = evolution.name
+            if let fetched = await viewModel.fetchPokemon(by: evolutionName) {
+                evolutionsLoaded.append(fetched)
+            }
+        }
+
+        await MainActor.run {
+            nextEvolutions = evolutionsLoaded
+        }
     }
 }

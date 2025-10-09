@@ -68,7 +68,7 @@ final class PokemonRepository {
                 generation: speciesDetail.generation.name,
                 flavorText: speciesDetail.englishFlavorText,
                 types: pokemonDetail.types,
-                nextEvolution: NextEvolution(
+                nextEvolution: NextEvolution.getAll(
                     from: evolutionChain.chain,
                     currentPokemonName: pokemonDetail.name
                 )
@@ -104,14 +104,53 @@ final class PokemonRepository {
         return try context.fetch(descriptor)
     }
 
-    func fetchPokemon(by name: String) throws -> PokemonsEntity? {
+    func fetchPokemon(by name: String) async throws -> PokemonsEntity? {
         var descriptor = FetchDescriptor<PokemonsEntity>(
             predicate: #Predicate { $0.name == name }
         )
         descriptor.fetchLimit = 1
 
-        let results = try context.fetch(descriptor)
-        return results.first
+        if let localPokemon = try context.fetch(descriptor).first {
+            return localPokemon
+        }
+
+        let pokemonAPI = PokeApiService(endpoint: .pokemonByName(name))
+
+        let pokemonDetail: PokemonDetail = try await getData(
+            from: pokemonAPI.url.absoluteString,
+            type: PokemonDetail.self
+        )
+
+        let speciesDetail: PokemonSpeciesDetail = try await getData(
+            from: pokemonDetail.species.url,
+            type: PokemonSpeciesDetail.self
+        )
+
+        let evolutionChain: EvolutionChainResponse = try await getData(
+            from: speciesDetail.evolutionChain.url,
+            type: EvolutionChainResponse.self
+        )
+
+        let newPokemon = PokemonsEntity(
+            name: pokemonDetail.name,
+            url: pokemonAPI.url.absoluteString,
+            id: pokemonDetail.id,
+            imageURL: pokemonDetail.imageURL,
+            imageShinyURL: pokemonDetail.imageShinyURL,
+            color: speciesDetail.color.name,
+            generation: speciesDetail.generation.name,
+            flavorText: speciesDetail.englishFlavorText,
+            types: pokemonDetail.types,
+            nextEvolution: NextEvolution.getAll(
+                from: evolutionChain.chain,
+                currentPokemonName: pokemonDetail.name
+            )
+        )
+
+        context.insert(newPokemon)
+        try context.save()
+
+        return newPokemon
     }
 
     func getData<T: Decodable>(

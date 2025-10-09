@@ -9,19 +9,21 @@ import Foundation
 import SwiftData
 
 @Model
-class PokemonsEntity: Hashable {
+class PokemonsEntity: Hashable, Identifiable {
     var id: Int
     var name: String
     var url: String
     var imageURL: String?
     var imageShinyURL: String?
-    var nextEvolutionName: String?
-    var nextEvolutionURL: String?
     var color: String?
     var generation: String?
     var flavorText: String?
+
     @Relationship(deleteRule: .cascade, inverse: \PokemonTypeEntity.pokemon)
     var types: [PokemonTypeEntity] = []
+
+    @Relationship(deleteRule: .cascade, inverse: \NextEvolutionEntity.pokemon)
+    var nextEvolutions: [NextEvolutionEntity] = []
 
     init(
         name: String,
@@ -33,7 +35,7 @@ class PokemonsEntity: Hashable {
         generation: String?,
         flavorText: String?,
         types: [PokemonType],
-        nextEvolution: NextEvolution?
+        nextEvolution: [NextEvolution]?
     ) {
         self.name = name
         self.url = url
@@ -43,8 +45,6 @@ class PokemonsEntity: Hashable {
         self.color = color
         self.generation = generation
         self.flavorText = flavorText
-        self.nextEvolutionName = nextEvolution?.name
-        self.nextEvolutionURL = nextEvolution?.url
 
         self.types = types.map {
             PokemonTypeEntity(
@@ -53,10 +53,36 @@ class PokemonsEntity: Hashable {
                 typeURL: $0.type.url
             )
         }
+
+        self.nextEvolutions = nextEvolution?.map {
+            NextEvolutionEntity(name: $0.name, url: $0.url)
+        } ?? []
     }
 
     static func == (lhs: PokemonsEntity, rhs: PokemonsEntity) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+@Model
+class NextEvolutionEntity: Hashable, Identifiable {
+    var id: UUID = UUID()
+    var name: String
+    var url: String
+
+    @Relationship var pokemon: PokemonsEntity?
+
+    init(name: String, url: String) {
+        self.name = name
+        self.url = url
+    }
+
+    static func == (lhs: NextEvolutionEntity, rhs: NextEvolutionEntity) -> Bool {
+        lhs.id == rhs.id
     }
 
     func hash(into hasher: inout Hasher) {

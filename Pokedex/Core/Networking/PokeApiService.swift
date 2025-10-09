@@ -18,15 +18,35 @@ struct PokeApiService {
         baseURL: URL? = URL(string: "https://pokeapi.co/api/v2/")
     ) {
         guard let baseURL else {
-            fatalError("invalid base url")
+            fatalError("Invalid base URL")
         }
+
         self.endpoint = endpoint
         self.parameters = parameter
-        var urlComponents = URLComponents(url: baseURL.appendingPathComponent(endpoint.rawValue), resolvingAgainstBaseURL: true)!
-        urlComponents.queryItems = parameter.map { key, value in
-            URLQueryItem(name: key, value: value)
+
+        switch endpoint {
+        case .pokemon:
+            var urlComponents = URLComponents(
+                url: baseURL.appendingPathComponent("pokemon"),
+                resolvingAgainstBaseURL: true
+            )!
+
+            if !parameter.isEmpty {
+                urlComponents.queryItems = parameter.map { key, value in
+                    URLQueryItem(name: key, value: value)
+                }
+            }
+
+            self.url = urlComponents.url ?? baseURL.appendingPathComponent("pokemon")
+
+        case .pokemonByName(let name):
+            self.url = baseURL.appendingPathComponent("pokemon/\(name.lowercased())")
+
+        case .species:
+            self.url = baseURL.appendingPathComponent("pokemon-species")
+
+        case .evolutionChain:
+            self.url = baseURL.appendingPathComponent("evolution-chain")
         }
-        self.url = urlComponents.url ?? baseURL
-        print(url)
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 struct EvolutionSection: View {
     let viewModel: ListVM
     let pokemon: PokemonsEntity
-    let nextEvolution: PokemonsEntity?
+    let nextEvolutions: [PokemonsEntity]
 
     var body: some View {
         VStack {
@@ -18,41 +18,97 @@ struct EvolutionSection: View {
                 .font(.system(size: 22))
                 .padding(.top, 8)
 
-            HStack(spacing: 16) {
-                VStack(spacing: 6) {
-                    pokemonEvolutionImageSection(for: pokemon)
-                        .frame(width: 100, height: 100)
-                    Text(pokemon.name.capitalized)
-                        .font(.system(size: 15))
-                    Text("#\(viewModel.formatID(pokemon.id))")
-                        .font(.system(size: 13))
-                }
+            if nextEvolutions.count > 1 {
+                HStack(alignment: .center, spacing: 16) {
+                    VStack(spacing: 6) {
+                        pokemonEvolutionImageSection(for: pokemon)
+                            .frame(width: 100, height: 100)
+                        Text(pokemon.name.capitalized)
+                            .font(.system(size: 15))
+                        Text("#\(viewModel.formatID(pokemon.id))")
+                            .font(.system(size: 13))
+                    }
 
-                if nextEvolution != nil {
                     Image(systemName: "arrow.right")
                         .font(.system(size: 20))
                         .foregroundColor(.gray)
                         .padding(.horizontal, 4)
-                }
 
-                if let evolution = nextEvolution {
-                    VStack(spacing: 6) {
-                        pokemonEvolutionImageSection(for: evolution)
-                            .frame(width: 100, height: 100)
-                        Text(evolution.name.capitalized)
-                            .font(.system(size: 15))
-                        Text("#\(viewModel.formatID(evolution.id))")
-                            .font(.system(size: 13))
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 16) {
+                            ForEach(nextEvolutions, id: \.id) { evolution in
+                                Text(evolution.name)
+                                NavigationLink(
+                                    destination: PokemonDetailView(
+                                        pokemon: evolution,
+                                        viewModel: viewModel
+                                    )
+                                    .toolbarRole(.editor)
+                                ) {
+                                    VStack(spacing: 6) {
+                                        pokemonEvolutionImageSection(for: evolution)
+                                            .frame(width: 100, height: 100)
+                                        Text(evolution.name.capitalized)
+                                            .font(.system(size: 15))
+                                        Text("#\(viewModel.formatID(evolution.id))")
+                                            .font(.system(size: 13))
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal)
                     }
                 }
+            }
+
+            else if let evolution = nextEvolutions.first {
+                HStack(spacing: 16) {
+                    VStack(spacing: 6) {
+                        pokemonEvolutionImageSection(for: pokemon)
+                            .frame(width: 100, height: 100)
+                        Text(pokemon.name.capitalized)
+                            .font(.system(size: 15))
+                        Text("#\(viewModel.formatID(pokemon.id))")
+                            .font(.system(size: 13))
+                    }
+
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 20))
+                        .foregroundColor(.gray)
+                        .padding(.horizontal, 4)
+
+                    NavigationLink(
+                        destination: PokemonDetailView(
+                            pokemon: evolution,
+                            viewModel: viewModel
+                        )
+                        .toolbarRole(.editor)
+                    ) {
+                        VStack(spacing: 6) {
+                            pokemonEvolutionImageSection(for: evolution)
+                                .frame(width: 100, height: 100)
+                            Text(evolution.name.capitalized)
+                                .font(.system(size: 15))
+                            Text("#\(viewModel.formatID(evolution.id))")
+                                .font(.system(size: 13))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            else {
+                Text("No evolutions available")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .padding(.top, 8)
             }
         }
     }
 
     @ViewBuilder
-    private func pokemonEvolutionImageSection(for pokemon: PokemonsEntity)
-        -> some View
-    {
+    private func pokemonEvolutionImageSection(for pokemon: PokemonsEntity) -> some View {
         if let imageURL = pokemon.imageURL, !imageURL.isEmpty {
             ZStack {
                 Ellipse()

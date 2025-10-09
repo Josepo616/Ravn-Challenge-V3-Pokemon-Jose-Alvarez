@@ -11,7 +11,7 @@ struct InfoContentSection: View {
     let viewModel: ListVM
     let pokemon: PokemonsEntity
     let generationFixed: String
-    let nextEvolution: PokemonsEntity?
+    let nextEvolutions: [PokemonsEntity]
 
     var body: some View {
         VStack(spacing: 0.0000001) {
@@ -33,16 +33,16 @@ struct InfoContentSection: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 10)
 
-            if nextEvolution != nil {
+            if !nextEvolutions.isEmpty {
                 Divider()
                     .frame(height: 1)
-                    .background(Color.gray)
+                    .background(Color.gray.opacity(0.5))
                     .padding(.vertical, 8)
 
                 EvolutionSection(
                     viewModel: viewModel,
                     pokemon: pokemon,
-                    nextEvolution: nextEvolution
+                    nextEvolutions: nextEvolutions
                 )
             }
         }

@@ -178,25 +178,20 @@ struct NextEvolution: Hashable {
     let name: String
     let url: String
 
-    init?(from chain: ChainLink, currentPokemonName: String) {
+    static func getAll(from chain: ChainLink, currentPokemonName: String) -> [NextEvolution] {
         if chain.species.name == currentPokemonName {
-            if let nextEvolution = chain.evolvesTo.first {
-                self.name = nextEvolution.species.name
-                self.url = nextEvolution.species.url
-                return
+            return chain.evolvesTo.map {
+                NextEvolution(name: $0.species.name, url: $0.species.url)
             }
-            return nil
         }
 
         for evolution in chain.evolvesTo {
-            if let result = NextEvolution(
-                from: evolution,
-                currentPokemonName: currentPokemonName
-            ) {
-                self = result
-                return
+            let results = getAll(from: evolution, currentPokemonName: currentPokemonName)
+            if !results.isEmpty {
+                return results
             }
         }
-        return nil
+
+        return []
     }
 }

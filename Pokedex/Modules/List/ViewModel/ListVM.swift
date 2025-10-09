@@ -63,7 +63,7 @@ class ListVM: ObservableObject {
 
     func fetchPokemon(by name: String) async -> PokemonsEntity? {
         do {
-            let pokemon = try repository.fetchPokemon(by: name)
+            let pokemon = try await repository.fetchPokemon(by: name)
             return pokemon
         } catch {
             print(

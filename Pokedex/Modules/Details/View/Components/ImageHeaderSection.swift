@@ -42,7 +42,7 @@ struct ImageHeaderSection: View {
                 }
                 Button(action: { selectedTab = 1 }) {
                     Text("Shiny Sprite")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 14))
                         .foregroundColor(Color.primary)
                         .padding(.horizontal, 50)
                         .padding(.vertical, 10)

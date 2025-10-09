@@ -5,7 +5,9 @@
 //  Created by JoseAlvarez on 10/6/25.
 //
 
-
-enum EndpointEnum: String {
-    case pokemon = "pokemon"
+enum EndpointEnum {
+    case pokemon
+    case pokemonByName(String)
+    case species
+    case evolutionChain
 }
