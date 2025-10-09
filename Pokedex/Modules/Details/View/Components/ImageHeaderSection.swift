@@ -15,12 +15,12 @@ struct ImageHeaderSection: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
                 if let imageURL = pokemon.imageURL, !imageURL.isEmpty {
-                    pokemonFirstImageSection(for: imageURL)
+                    PokemonAsyncImage(urlString: imageURL, size: 180, placeholderText: "No image available")
                         .tag(0)
                 }
 
                 if let shinyURL = pokemon.imageShinyURL, !shinyURL.isEmpty {
-                    pokemonFirstImageSection(for: shinyURL)
+                    PokemonAsyncImage(urlString: shinyURL, size: 180, placeholderText: "No image available")
                         .tag(1)
                 }
             }
@@ -61,35 +61,6 @@ struct ImageHeaderSection: View {
                     .stroke(Color.gray.opacity(0.4), lineWidth: 1)
             )
             .padding(.bottom, 16)
-        }
-    }
-
-    @ViewBuilder
-    private func pokemonFirstImageSection(for urlString: String?) -> some View {
-        if let urlString = urlString, !urlString.isEmpty,
-            let url = URL(string: urlString)
-        {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 200, height: 200)
-                case .failure:
-                    Text("Failed to load image")
-                        .foregroundColor(.red)
-                case .empty:
-                    ProgressView()
-                @unknown default:
-                    EmptyView()
-                }
-            }
-            .padding(.bottom, 40)
-
-        } else {
-            Text("No image available")
-                .foregroundColor(.gray)
         }
     }
 }

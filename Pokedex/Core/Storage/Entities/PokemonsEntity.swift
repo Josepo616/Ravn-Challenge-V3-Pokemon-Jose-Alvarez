@@ -10,17 +10,21 @@ import SwiftData
 
 @Model
 class PokemonsEntity: Hashable, Identifiable {
+    @Attribute(.unique)
     var id: Int
     var name: String
     var url: String
-    var imageURL: String?
-    var imageShinyURL: String?
-    var color: String?
+
     var height: Double
     var weight: Double
+
+    var color: String?
     var generation: String?
     var flavorText: String?
     var evolutionTrigger: String?
+
+    var imageURL: String?
+    var imageShinyURL: String?
 
     @Relationship(deleteRule: .cascade, inverse: \PokemonTypeEntity.pokemon)
     var types: [PokemonTypeEntity] = []
@@ -69,28 +73,6 @@ class PokemonsEntity: Hashable, Identifiable {
     }
 
     static func == (lhs: PokemonsEntity, rhs: PokemonsEntity) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
-@Model
-class NextEvolutionEntity: Hashable, Identifiable {
-    var id: UUID = UUID()
-    var name: String
-    var url: String
-
-    @Relationship var pokemon: PokemonsEntity?
-
-    init(name: String, url: String) {
-        self.name = name
-        self.url = url
-    }
-
-    static func == (lhs: NextEvolutionEntity, rhs: NextEvolutionEntity) -> Bool {
         lhs.id == rhs.id
     }
 

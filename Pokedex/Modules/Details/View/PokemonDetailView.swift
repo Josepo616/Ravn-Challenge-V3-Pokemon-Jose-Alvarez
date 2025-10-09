@@ -12,7 +12,7 @@ struct PokemonDetailView: View {
     @State private var nextEvolutions: [PokemonsEntity] = []
     @State private var selectedTab = 0
     let pokemon: PokemonsEntity
-    var viewModel: ListVM
+    var listVM: ListVM
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -29,7 +29,7 @@ struct PokemonDetailView: View {
                 }
 
                 InfoContentSection(
-                    viewModel: viewModel,
+                    listVM: listVM,
                     pokemon: pokemon,
                     generationFixed: generationFixed,
                     nextEvolutions: nextEvolutions
@@ -57,14 +57,14 @@ struct PokemonDetailView: View {
         }
     }
 
-    private func loadNextEvolutions() async {
+    func loadNextEvolutions() async {
         guard !pokemon.nextEvolutions.isEmpty else { return }
 
         var evolutionsLoaded: [PokemonsEntity] = []
 
         for evolution in pokemon.nextEvolutions {
             let evolutionName = evolution.name
-            if let fetched = await viewModel.fetchPokemon(by: evolutionName) {
+            if let fetched = await listVM.fetchPokemon(by: evolutionName) {
                 evolutionsLoaded.append(fetched)
             }
         }

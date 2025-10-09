@@ -22,7 +22,7 @@ struct PokemonListView: View {
                         NavigationLink(
                             destination: PokemonDetailView(
                                 pokemon: pokemon,
-                                viewModel: listVM
+                                listVM: listVM
                             )
                             .toolbarRole(.editor)
                         ) {

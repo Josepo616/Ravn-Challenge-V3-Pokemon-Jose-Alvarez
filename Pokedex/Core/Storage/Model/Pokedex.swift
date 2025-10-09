@@ -8,6 +8,8 @@
 import Foundation
 import SwiftData
 
+// MARK: - Pokedex List Response & Entry
+
 struct PokedexResponse: Decodable, Hashable {
     let count: Int
     let next: String
@@ -15,10 +17,7 @@ struct PokedexResponse: Decodable, Hashable {
     let results: [Pokedex]
 
     enum CodingKeys: String, CodingKey {
-        case count
-        case next
-        case previous
-        case results
+        case count, next, previous, results
     }
 }
 
@@ -26,6 +25,8 @@ struct Pokedex: Decodable, Hashable {
     let name: String
     let url: String
 }
+
+// MARK: - Pokemon Basic Info & Details
 
 struct PokemonDetail: Decodable, Hashable {
     let id: Int
@@ -38,13 +39,7 @@ struct PokemonDetail: Decodable, Hashable {
     let species: PokemonSpecies
 
     enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case sprites
-        case height
-        case weight
-        case types
-        case species
+        case id, name, sprites, height, weight, types, species
     }
 
     init(from decoder: Decoder) throws {
@@ -54,12 +49,14 @@ struct PokemonDetail: Decodable, Hashable {
         name = try container.decode(String.self, forKey: .name)
         imageURL = sprites.other?.home?.frontDefault
         imageShinyURL = sprites.other?.home?.frontShiny
-        weight = try container.decode(Double.self, forKey: .weight)
         height = try container.decode(Double.self, forKey: .height)
+        weight = try container.decode(Double.self, forKey: .weight)
         types = try container.decode([PokemonType].self, forKey: .types)
         species = try container.decode(PokemonSpecies.self, forKey: .species)
     }
 }
+
+// MARK: - Sprites Hierarchy
 
 struct Sprites: Decodable, Hashable {
     let other: OtherSprites?
@@ -87,13 +84,14 @@ struct HomeSprites: Decodable, Hashable {
     }
 }
 
+// MARK: - Pokemon Type
+
 struct PokemonType: Decodable, Hashable {
     let slot: Int
     let type: TypeDetails
 
     enum CodingKeys: String, CodingKey {
-        case slot
-        case type
+        case slot, type
     }
 }
 
@@ -102,10 +100,11 @@ struct TypeDetails: Decodable, Hashable {
     let url: String
 
     enum CodingKeys: String, CodingKey {
-        case name
-        case url
+        case name, url
     }
 }
+
+// MARK: - Species Info
 
 struct PokemonSpecies: Decodable, Hashable {
     let name: String
@@ -119,17 +118,17 @@ struct PokemonSpeciesDetail: Decodable {
     let flavorTextEntries: [FlavorTextEntry]
 
     enum CodingKeys: String, CodingKey {
-        case color
-        case generation
+        case color, generation
         case evolutionChain = "evolution_chain"
         case flavorTextEntries = "flavor_text_entries"
     }
 
     var englishFlavorText: String? {
-        return flavorTextEntries.first(where: { $0.language.name == "en" })?
-            .cleanedFlavorText
+        flavorTextEntries.first(where: { $0.language.name == "en" })?.cleanedFlavorText
     }
 }
+
+// MARK: - Flavor Text
 
 struct FlavorTextEntry: Decodable {
     let flavorText: String
@@ -153,6 +152,8 @@ struct FlavorResponse: Decodable {
     let url: String
 }
 
+// MARK: - References (Color, Generation, Evolution Chain)
+
 struct ColorNameReference: Decodable {
     let name: String
 }
@@ -164,6 +165,8 @@ struct GenerationNameReference: Decodable {
 struct EvolutionChainReference: Decodable {
     let url: String
 }
+
+// MARK: - Evolution Chain
 
 struct EvolutionChainResponse: Decodable {
     let id: Int
@@ -192,7 +195,6 @@ struct EvolutionDetail: Decodable {
     }
 }
 
-
 struct Trigger: Decodable, Hashable {
     let name: String
 
@@ -201,28 +203,24 @@ struct Trigger: Decodable, Hashable {
     }
 }
 
+// MARK: - Next Evolutions Helper
+
 struct NextEvolution: Hashable {
     let name: String
     let url: String
     let triggerName: String?
 
-    static func getAll(from chain: ChainLink, currentPokemonName: String)
-        -> [NextEvolution]
-    {
-        
+    static func getAll(from chain: ChainLink, currentPokemonName: String) -> [NextEvolution] {
         if chain.species.name == currentPokemonName {
-
             let baseTriggerName = chain.evolvesTo.first?.evolutionDetails.first?.trigger?.name
-            
             return chain.evolvesTo.map { evolutionLink in
-                return NextEvolution(
+                NextEvolution(
                     name: evolutionLink.species.name,
                     url: evolutionLink.species.url,
                     triggerName: baseTriggerName
                 )
             }
         }
-
 
         for evolution in chain.evolvesTo {
             let results = getAll(from: evolution, currentPokemonName: currentPokemonName)

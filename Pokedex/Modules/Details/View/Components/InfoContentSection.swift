@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct InfoContentSection: View {
-    let viewModel: ListVM
+    let listVM: ListVM
     let pokemon: PokemonsEntity
     let generationFixed: String
     let nextEvolutions: [PokemonsEntity]
@@ -16,7 +16,7 @@ struct InfoContentSection: View {
     var body: some View {
         VStack(spacing: 0.0000001) {
             Text(
-                "#\(viewModel.formatID(pokemon.id)) \(pokemon.name.capitalized)"
+                "#\(listVM.formatID(pokemon.id)) \(pokemon.name.capitalized)"
             )
             .font(.system(size: 28))
             .padding(.bottom, -50)
@@ -34,10 +34,10 @@ struct InfoContentSection: View {
                 .padding(.bottom, 10)
             
             Text([
-                pokemon.weight != 0 ? "Weight: \(formatNumber(pokemon.weight)) kg" : nil,
-                pokemon.height != 0 ? "Height: \(formatNumber(pokemon.height)) m" : nil
+                pokemon.weight != 0 ? "Weight: \(pokemon.weight.formattedString()) kg" : nil,
+                pokemon.height != 0 ? "Height: \(pokemon.height.formattedString()) m" : nil
             ].compactMap { $0 }.joined(separator: ", "))
-            
+
             if !nextEvolutions.isEmpty {
                 Divider()
                     .frame(height: 1)
@@ -45,7 +45,7 @@ struct InfoContentSection: View {
                     .padding(.vertical, 8)
                 
                 EvolutionSection(
-                    viewModel: viewModel,
+                    listVM: listVM,
                     pokemon: pokemon,
                     nextEvolutions: nextEvolutions
                 )
@@ -53,14 +53,4 @@ struct InfoContentSection: View {
         }
         .cornerRadius(30, corners: [.topLeft, .topRight])
     }
-    
-    func formatNumber(_ value: Double) -> String {
-        if value == 0 { return "" }
-        if value.truncatingRemainder(dividingBy: 1) == 0 {
-            return String(format: "%.0f", value)
-        } else {
-            return String(format: "%.2f", value)
-        }
-    }
-
 }

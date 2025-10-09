@@ -122,27 +122,19 @@ final class PokemonRepository {
     }
     
     private func fetchAndCreatePokemon(urlString: String, name: String) async throws -> PokemonsEntity {
-        let pokemonDetail: PokemonDetail = try await getData(
-            from: urlString,
-            type: PokemonDetail.self
-        )
-
-        let speciesDetail: PokemonSpeciesDetail = try await getData(
-            from: pokemonDetail.species.url,
-            type: PokemonSpeciesDetail.self
-        )
-
-        let evolutionChain: EvolutionChainResponse = try await getData(
-            from: speciesDetail.evolutionChain.url,
-            type: EvolutionChainResponse.self
+        let (detail, species, evolution): (PokemonDetail, PokemonSpeciesDetail, EvolutionChainResponse)
+        = try await fetchLinkedResources(
+            rootURL: urlString,
+            speciesURL: { $0.species.url },
+            evolutionURL: { $0.evolutionChain.url }
         )
 
         return createPokemonEntity(
             name: name,
             url: urlString,
-            detail: pokemonDetail,
-            species: speciesDetail,
-            evolution: evolutionChain
+            detail: detail,
+            species: species,
+            evolution: evolution
         )
     }
     
@@ -201,5 +193,22 @@ final class PokemonRepository {
         }
 
         return try jsonDecoder.decode(T.self, from: data)
+    }
+    
+    // MARK: - Linked Resource Fetch Helper
+
+    private func fetchLinkedResources<
+        T1: Decodable,
+        T2: Decodable,
+        T3: Decodable
+    >(
+        rootURL: String,
+        speciesURL: (T1) -> String,
+        evolutionURL: (T2) -> String
+    ) async throws -> (T1, T2, T3) {
+        let detail: T1 = try await getData(from: rootURL, type: T1.self)
+        let species: T2 = try await getData(from: speciesURL(detail), type: T2.self)
+        let evolution: T3 = try await getData(from: evolutionURL(species), type: T3.self)
+        return (detail, species, evolution)
     }
 }

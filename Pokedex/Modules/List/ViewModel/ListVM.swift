@@ -59,6 +59,7 @@ class ListVM: ObservableObject {
     func clearSearch() {
         filteredPokemons = pokemon
         isSearching = false
+        searchQuery = ""
     }
 
     func fetchPokemon(by name: String) async -> PokemonsEntity? {
@@ -75,11 +76,9 @@ class ListVM: ObservableObject {
 
     func loadMorePokemons() async {
         guard !isFetchingMore else { return }
-
         guard !isSearching && searchQuery.isEmpty else { return }
 
         isFetchingMore = true
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
         offset += limit
         do {
             let newPokemons = try await repository.fetchAndStorePokemons(

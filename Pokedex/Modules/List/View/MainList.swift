@@ -9,7 +9,7 @@ import SwiftData
 import SwiftUI
 
 struct MainList: View {
-    @StateObject var listVM: ListVM
+    @ObservedObject var listVM: ListVM
     @State private var searchQuery: String = ""
 
     var body: some View {
@@ -41,7 +41,6 @@ struct MainList: View {
     }
 
     private func clearSearch() {
-        searchQuery = ""
         listVM.clearSearch()
     }
 }
