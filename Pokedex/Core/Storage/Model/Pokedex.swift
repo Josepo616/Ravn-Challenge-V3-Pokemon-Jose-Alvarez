@@ -167,23 +167,60 @@ struct EvolutionChainResponse: Decodable {
 struct ChainLink: Decodable {
     let species: PokemonSpecies
     let evolvesTo: [ChainLink]
+    let evolutionDetails: [EvolutionDetail]
+    let trigger: Trigger?
 
     enum CodingKeys: String, CodingKey {
         case species
         case evolvesTo = "evolves_to"
+        case evolutionDetails = "evolution_details"
+        case trigger
+    }
+}
+
+struct EvolutionDetail: Decodable {
+    let trigger: Trigger?
+    let minLevel: Int?
+    let heldItem: String?
+
+    enum CodingKeys: String, CodingKey {
+        case trigger
+        case minLevel = "min_level"
+        case heldItem = "held_item"
+    }
+}
+
+
+struct Trigger: Decodable, Hashable {
+    let name: String
+
+    enum CodingKeys: String, CodingKey {
+        case name
     }
 }
 
 struct NextEvolution: Hashable {
     let name: String
     let url: String
+    let triggerName: String?
 
-    static func getAll(from chain: ChainLink, currentPokemonName: String) -> [NextEvolution] {
+    static func getAll(from chain: ChainLink, currentPokemonName: String)
+        -> [NextEvolution]
+    {
+        
         if chain.species.name == currentPokemonName {
-            return chain.evolvesTo.map {
-                NextEvolution(name: $0.species.name, url: $0.species.url)
+
+            let baseTriggerName = chain.evolvesTo.first?.evolutionDetails.first?.trigger?.name
+            
+            return chain.evolvesTo.map { evolutionLink in
+                return NextEvolution(
+                    name: evolutionLink.species.name,
+                    url: evolutionLink.species.url,
+                    triggerName: baseTriggerName
+                )
             }
         }
+
 
         for evolution in chain.evolvesTo {
             let results = getAll(from: evolution, currentPokemonName: currentPokemonName)

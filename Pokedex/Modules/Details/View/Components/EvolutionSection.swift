@@ -72,12 +72,15 @@ struct EvolutionSection: View {
                         Text("#\(viewModel.formatID(pokemon.id))")
                             .font(.system(size: 13))
                     }
-
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 20))
-                        .foregroundColor(.gray)
-                        .padding(.horizontal, 4)
-
+                    
+                    VStack {
+                        Text(pokemon.evolutionTrigger ?? "Unknown".capitalized)
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 20))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 4)
+                        
+                    }
                     NavigationLink(
                         destination: PokemonDetailView(
                             pokemon: evolution,

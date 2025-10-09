@@ -18,6 +18,7 @@ class PokemonsEntity: Hashable, Identifiable {
     var color: String?
     var generation: String?
     var flavorText: String?
+    var evolutionTrigger: String?
 
     @Relationship(deleteRule: .cascade, inverse: \PokemonTypeEntity.pokemon)
     var types: [PokemonTypeEntity] = []
@@ -34,6 +35,7 @@ class PokemonsEntity: Hashable, Identifiable {
         color: String,
         generation: String?,
         flavorText: String?,
+        evolutionTrigger: String?,
         types: [PokemonType],
         nextEvolution: [NextEvolution]?
     ) {
@@ -45,6 +47,7 @@ class PokemonsEntity: Hashable, Identifiable {
         self.color = color
         self.generation = generation
         self.flavorText = flavorText
+        self.evolutionTrigger = evolutionTrigger
 
         self.types = types.map {
             PokemonTypeEntity(

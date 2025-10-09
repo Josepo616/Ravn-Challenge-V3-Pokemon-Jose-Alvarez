@@ -67,6 +67,7 @@ final class PokemonRepository {
                 color: speciesDetail.color.name,
                 generation: speciesDetail.generation.name,
                 flavorText: speciesDetail.englishFlavorText,
+                evolutionTrigger: NextEvolution.getAll(from: evolutionChain.chain, currentPokemonName: pokemonDetail.name).first?.triggerName,
                 types: pokemonDetail.types,
                 nextEvolution: NextEvolution.getAll(
                     from: evolutionChain.chain,
@@ -140,6 +141,7 @@ final class PokemonRepository {
             color: speciesDetail.color.name,
             generation: speciesDetail.generation.name,
             flavorText: speciesDetail.englishFlavorText,
+            evolutionTrigger: NextEvolution.getAll(from: evolutionChain.chain, currentPokemonName: pokemonDetail.name).first?.triggerName,
             types: pokemonDetail.types,
             nextEvolution: NextEvolution.getAll(
                 from: evolutionChain.chain,
