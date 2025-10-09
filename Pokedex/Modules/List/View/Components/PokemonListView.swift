@@ -15,7 +15,9 @@ struct PokemonListView: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                if pokemons.isEmpty {
+                if listVM.isFetchingData {
+                    ProgressView()
+                } else if pokemons.isEmpty {
                     EmptyStateView()
                 } else {
                     ForEach(pokemons, id: \.self) { pokemon in
@@ -36,6 +38,12 @@ struct PokemonListView: View {
                                 }
                             }
                         }
+                    }
+                    if listVM.isFetchingMore {
+                        Text("Loading more Pokémon...")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                            .padding()
                     }
                 }
             }

@@ -6,5 +6,6 @@
 //
 
 enum ParameterEnum: String {
-    case limit, offset
+    case limit = "limit"
+    case offset = "offset"
 }

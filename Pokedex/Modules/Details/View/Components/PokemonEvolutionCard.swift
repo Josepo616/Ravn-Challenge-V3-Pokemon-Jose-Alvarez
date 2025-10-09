@@ -13,7 +13,7 @@ struct PokemonEvolutionCard: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            PokemonAsyncImage(
+            PokemonKingFisherImage(
                 urlString: pokemon.imageURL,
                 size: 100,
                 placeholderText: "No image"

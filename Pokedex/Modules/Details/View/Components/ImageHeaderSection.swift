@@ -15,12 +15,12 @@ struct ImageHeaderSection: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
                 if let imageURL = pokemon.imageURL, !imageURL.isEmpty {
-                    PokemonAsyncImage(urlString: imageURL, size: 180, placeholderText: "No image available")
+                    PokemonKingFisherImage(urlString: imageURL, size: 180, placeholderText: "No image available")
                         .tag(0)
                 }
 
                 if let shinyURL = pokemon.imageShinyURL, !shinyURL.isEmpty {
-                    PokemonAsyncImage(urlString: shinyURL, size: 180, placeholderText: "No image available")
+                    PokemonKingFisherImage(urlString: shinyURL, size: 180, placeholderText: "No image available")
                         .tag(1)
                 }
             }

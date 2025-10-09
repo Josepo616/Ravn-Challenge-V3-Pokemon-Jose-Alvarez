@@ -1,16 +1,10 @@
-//
-//  ContentView.swift
-//  Pokedex
-//
-//  Created by JoseAlvarez on 10/6/25.
-//
-
 import SwiftData
 import SwiftUI
 
 struct MainList: View {
     @ObservedObject var listVM: ListVM
     @State private var searchQuery: String = ""
+    @State private var showAlert = false
 
     var body: some View {
         NavigationStack {
@@ -31,7 +25,33 @@ struct MainList: View {
                 }
             }
             .task {
-                await listVM.fetchPokemons()
+                do {
+                    try await listVM.fetchPokemons()
+                } catch {
+                    listVM.fetchError = .connectivityIssue
+                }
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Connectivity Issue"),
+                    message: Text(listVM.fetchError?.localizedDescription ?? "An unknown error occurred."),
+                    primaryButton: .default(Text("Try Again")) {
+                        listVM.fetchError = nil
+                        Task {
+                            do {
+                                try await listVM.fetchPokemons()
+                            } catch {
+                                listVM.fetchError = .connectivityIssue
+                            }
+                        }
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
+            .onChange(of: listVM.fetchError) { _, error in
+                if error != nil {
+                    showAlert = true
+                }
             }
         }
     }

@@ -11,30 +11,46 @@ import Foundation
 class ListVM: ObservableObject {
     @Published private(set) var pokemon: [PokemonsEntity] = []
     @Published private(set) var pokedex: [PokedexEntity] = []
+    @Published private(set) var offset: Int = 0
+    @Published private(set) var isFetchingMore: Bool = false
     @Published var filteredPokemons: [PokemonsEntity] = []
     @Published var isSearching: Bool = false
-    @Published private(set) var offset: Int = 0
+    @Published var isFetchingData: Bool = false
     @Published var searchQuery: String = ""
+    @Published var fetchError: PokemonError?
     private let limit: Int = 50
-    private var isFetchingMore: Bool = false
     private let repository: PokemonRepository
 
     init(repository: PokemonRepository) {
         self.repository = repository
     }
 
-    func fetchPokemons() async {
+    func fetchPokemons() async throws {
         if !self.pokemon.isEmpty { return }
-
+        isFetchingData = true
         do {
             self.pokedex = try repository.fetchPokedexMetadata()
             self.pokemon = try await repository.fetchAndStorePokemons()
             self.pokemon.sort { $0.id < $1.id }
             self.filteredPokemons = self.pokemon
+            isFetchingData = false
         } catch {
-            print("Error fetching pokemons: \(error.localizedDescription)")
+            if let urlError = error as? URLError, urlError.code == .notConnectedToInternet {
+                throw PokemonError.connectivityIssue
+            } else {
+                throw PokemonError.unknown
+            }
         }
     }
+    
+    func retryFetchPokemons() async {
+        do {
+            try await fetchPokemons()
+        } catch {
+            self.fetchError = error as? PokemonError ?? .unknown
+        }
+    }
+
 
     func formatID(_ id: Int) -> String {
         return String(format: "%04d", id)
@@ -67,34 +83,60 @@ class ListVM: ObservableObject {
             let pokemon = try await repository.fetchPokemon(by: name)
             return pokemon
         } catch {
-            print(
-                "Error fetching Pokémon named \(name): \(error.localizedDescription)"
-            )
             return nil
         }
     }
 
     func loadMorePokemons() async {
         guard !isFetchingMore else { return }
+        
         guard !isSearching && searchQuery.isEmpty else { return }
 
         isFetchingMore = true
         offset += limit
+        
+        defer {
+            DispatchQueue.main.async {
+                self.isFetchingMore = false
+            }
+        }
+
         do {
             let newPokemons = try await repository.fetchAndStorePokemons(
                 offset: offset,
                 limit: limit
             )
+            
             let sortedNew = newPokemons.sorted { $0.id < $1.id }
             let newUnique = sortedNew.filter { new in
                 !pokemon.contains(where: { $0.id == new.id })
             }
+            
             pokemon.append(contentsOf: newUnique)
             filteredPokemons.append(contentsOf: newUnique)
+
         } catch {
             print("Error fetching more Pokémons: \(error.localizedDescription)")
         }
-        isSearching = false
-        isFetchingMore = false
+    }
+
+}
+
+enum PokemonError: Error, Equatable {
+    case connectivityIssue
+    case serverError
+    case unknown
+
+
+    var localizedDescription: String {
+        switch self {
+        case .connectivityIssue:
+            return "There is a problem trying to connect to the server.\nPlease check your connectivity."
+        case .serverError:
+            return "Server error occurred."
+        case .unknown:
+            return "An unknown error occurred."
+        }
     }
 }
+

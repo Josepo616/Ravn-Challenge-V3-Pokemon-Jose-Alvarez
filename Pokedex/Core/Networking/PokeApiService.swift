@@ -9,12 +9,12 @@ import Foundation
 
 struct PokeApiService {
     let endpoint: EndpointEnum
-    let parameters: [String: String]
+    let parameters: [ParameterEnum: String]
     let url: URL
 
     init(
         endpoint: EndpointEnum,
-        parameter: [String: String] = [:],
+        parameters: [ParameterEnum: String] = [:],
         baseURL: URL? = URL(string: "https://pokeapi.co/api/v2/")
     ) {
         guard let baseURL else {
@@ -22,7 +22,7 @@ struct PokeApiService {
         }
 
         self.endpoint = endpoint
-        self.parameters = parameter
+        self.parameters = parameters
 
         switch endpoint {
         case .pokemon:
@@ -31,9 +31,9 @@ struct PokeApiService {
                 resolvingAgainstBaseURL: true
             )!
 
-            if !parameter.isEmpty {
-                urlComponents.queryItems = parameter.map { key, value in
-                    URLQueryItem(name: key, value: value)
+            if !parameters.isEmpty {
+                urlComponents.queryItems = parameters.map { key, value in
+                    URLQueryItem(name: key.rawValue, value: value)
                 }
             }
 
