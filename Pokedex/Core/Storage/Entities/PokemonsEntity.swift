@@ -16,6 +16,8 @@ class PokemonsEntity: Hashable, Identifiable {
     var imageURL: String?
     var imageShinyURL: String?
     var color: String?
+    var height: Double
+    var weight: Double
     var generation: String?
     var flavorText: String?
     var evolutionTrigger: String?
@@ -33,6 +35,8 @@ class PokemonsEntity: Hashable, Identifiable {
         imageURL: String?,
         imageShinyURL: String?,
         color: String,
+        height: Double,
+        weight: Double,
         generation: String?,
         flavorText: String?,
         evolutionTrigger: String?,
@@ -45,6 +49,8 @@ class PokemonsEntity: Hashable, Identifiable {
         self.imageURL = imageURL
         self.imageShinyURL = imageShinyURL
         self.color = color
+        self.height = height
+        self.weight = weight
         self.generation = generation
         self.flavorText = flavorText
         self.evolutionTrigger = evolutionTrigger

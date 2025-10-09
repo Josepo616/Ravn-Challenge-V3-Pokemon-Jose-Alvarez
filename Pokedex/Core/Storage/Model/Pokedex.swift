@@ -32,6 +32,8 @@ struct PokemonDetail: Decodable, Hashable {
     let name: String
     let imageURL: String?
     let imageShinyURL: String?
+    let height: Double
+    let weight: Double
     let types: [PokemonType]
     let species: PokemonSpecies
 
@@ -39,6 +41,8 @@ struct PokemonDetail: Decodable, Hashable {
         case id
         case name
         case sprites
+        case height
+        case weight
         case types
         case species
     }
@@ -50,6 +54,8 @@ struct PokemonDetail: Decodable, Hashable {
         name = try container.decode(String.self, forKey: .name)
         imageURL = sprites.other?.home?.frontDefault
         imageShinyURL = sprites.other?.home?.frontShiny
+        weight = try container.decode(Double.self, forKey: .weight)
+        height = try container.decode(Double.self, forKey: .height)
         types = try container.decode([PokemonType].self, forKey: .types)
         species = try container.decode(PokemonSpecies.self, forKey: .species)
     }
