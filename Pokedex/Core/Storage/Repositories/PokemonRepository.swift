@@ -11,7 +11,7 @@ import SwiftData
 final class PokemonRepository {
     private let context: ModelContext
     private let jsonDecoder = JSONDecoder()
-    private var fetchError: Error?  // Aquí almacenaremos el error si ocurre
+    private var fetchError: Error?
 
     init(context: ModelContext) {
         self.context = context

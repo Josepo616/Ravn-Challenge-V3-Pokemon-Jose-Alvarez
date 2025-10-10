@@ -119,24 +119,4 @@ class ListVM: ObservableObject {
             print("Error fetching more Pokémons: \(error.localizedDescription)")
         }
     }
-
 }
-
-enum PokemonError: Error, Equatable {
-    case connectivityIssue
-    case serverError
-    case unknown
-
-
-    var localizedDescription: String {
-        switch self {
-        case .connectivityIssue:
-            return "There is a problem trying to connect to the server.\nPlease check your connectivity."
-        case .serverError:
-            return "Server error occurred."
-        case .unknown:
-            return "An unknown error occurred."
-        }
-    }
-}
-

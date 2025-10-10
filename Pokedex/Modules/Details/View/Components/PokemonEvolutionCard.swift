@@ -16,7 +16,7 @@ struct PokemonEvolutionCard: View {
             PokemonKingFisherImage(
                 urlString: pokemon.imageURL,
                 size: 100,
-                placeholderText: "No image"
+                placeholderImage: "Error"
             )
             Text(pokemon.name.capitalized)
                 .font(.system(size: 15))

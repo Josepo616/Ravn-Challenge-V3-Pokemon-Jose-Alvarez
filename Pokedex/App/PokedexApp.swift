@@ -26,7 +26,7 @@ struct PokedexApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainList(listVM: listVM)
+            MainList(listVM: listVM, searchQuery: $listVM.searchQuery)
         }
         .modelContainer(sharedModelContainer)
     }

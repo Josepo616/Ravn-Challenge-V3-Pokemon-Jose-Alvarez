@@ -18,7 +18,7 @@ struct PokemonRowView: View {
                 .padding(.leading, 30)
 
             HStack(spacing: 12) {
-                PokemonKingFisherImage(urlString: pokemon.imageURL, size: 60, placeholderText: "No image available")
+                PokemonKingFisherImage(urlString: pokemon.imageURL, size: 60, placeholderImage: "Error")
                 PokemonInfoView(
                     name: pokemon.name,
                     id: pokemon.id,

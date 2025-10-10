@@ -11,13 +11,12 @@ struct PokemonListView: View {
     @Binding var isSearching: Bool
     let pokemons: [PokemonsEntity]
     let listVM: ListVM
+    let showEmptyState: Bool
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                if listVM.isFetchingData {
-                    ProgressView()
-                } else if pokemons.isEmpty {
+                if showEmptyState {
                     EmptyStateView()
                 } else {
                     ForEach(pokemons, id: \.self) { pokemon in
@@ -59,6 +58,7 @@ struct PokemonListView: View {
                     .scaleEffect(2)
                     .progressViewStyle(CircularProgressViewStyle())
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .offset(y: -250)
             }
         }
     }

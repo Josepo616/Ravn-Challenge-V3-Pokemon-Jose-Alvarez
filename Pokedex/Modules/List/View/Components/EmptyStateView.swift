@@ -9,7 +9,7 @@ import SwiftUI
 
 struct EmptyStateView: View {
     var body: some View {
-        Text("Failed to load data")
+        Text(PokemonError.searchEmpty.localizedDescription)
             .font(.headline)
             .foregroundColor(.red)
             .frame(maxWidth: .infinity, alignment: .center)

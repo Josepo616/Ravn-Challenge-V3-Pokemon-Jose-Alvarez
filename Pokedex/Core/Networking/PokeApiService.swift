@@ -8,13 +8,13 @@
 import Foundation
 
 struct PokeApiService {
-    let endpoint: EndpointEnum
-    let parameters: [ParameterEnum: String]
+    let endpoint: Endpoint
+    let parameters: [Parameter: String]
     let url: URL
 
     init(
-        endpoint: EndpointEnum,
-        parameters: [ParameterEnum: String] = [:],
+        endpoint: Endpoint,
+        parameters: [Parameter: String] = [:],
         baseURL: URL? = URL(string: "https://pokeapi.co/api/v2/")
     ) {
         guard let baseURL else {

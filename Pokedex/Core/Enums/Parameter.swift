@@ -5,7 +5,7 @@
 //  Created by JoseAlvarez on 10/6/25.
 //
 
-enum ParameterEnum: String {
+enum Parameter: String {
     case limit = "limit"
     case offset = "offset"
 }

@@ -5,47 +5,42 @@
 //  Created by JoseAlvarez on 10/9/25.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct PokemonKingFisherImage: View {
     let urlString: String?
     let size: CGFloat
-    let placeholderText: String
+    let placeholderImage: String
     @State private var loadError: Bool = false
-    
+
     var body: some View {
         Group {
-            if let urlString = urlString, let url = URL(string: urlString), !urlString.isEmpty {
-                KFImage.url(url)
-                    .onSuccess { _ in
-                        self.loadError = false
-                    }
-                    .onFailure { _ in
-                        self.loadError = true
-                    }
-                    .placeholder {
-                        if !loadError {
-                            ProgressView()
+            if let urlString = urlString, let url = URL(string: urlString),
+                !urlString.isEmpty
+            {
+                if !loadError {
+                    KFImage.url(url)
+                        .onSuccess { _ in
+                            self.loadError = false
                         }
-                    }
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: size, height: size)
-                    .onAppear {
-                        self.loadError = false
-                    }
-            } else {
-                Text(placeholderText)
-                    .foregroundColor(.gray)
-                    .font(.system(size: 10))
-            }
-            
-            if loadError {
-                Text(placeholderText)
-                    .foregroundColor(.red)
-                    .font(.system(size: 12))
+                        .onFailure { _ in
+                            self.loadError = true
+                        }
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: size, height: size)
+                        .onAppear {
+                            self.loadError = false
+                        }
+                } else {
+                    Image(placeholderImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: size, height: size)
+                }
             }
         }
+        
     }
 }
