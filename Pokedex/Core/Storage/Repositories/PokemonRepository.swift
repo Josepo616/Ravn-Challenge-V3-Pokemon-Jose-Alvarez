@@ -202,6 +202,7 @@ final class PokemonRepository: PokemonRepositoryProtocol {
             generation: species.generation.name,
             flavorText: species.englishFlavorText,
             evolutionTrigger: nextEvolutions.first?.triggerName ?? "",
+            isLegendary: species.isLegendary,
             types: detail.types,
             nextEvolution: nextEvolutions
         )

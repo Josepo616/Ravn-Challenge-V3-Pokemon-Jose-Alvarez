@@ -116,11 +116,13 @@ struct PokemonSpeciesDetail: Decodable {
     let evolutionChain: EvolutionChainReference
     let generation: GenerationNameReference
     let flavorTextEntries: [FlavorTextEntry]
+    let isLegendary: Bool
 
     enum CodingKeys: String, CodingKey {
         case color, generation
         case evolutionChain = "evolution_chain"
         case flavorTextEntries = "flavor_text_entries"
+        case isLegendary = "is_legendary"
     }
 
     var englishFlavorText: String? {

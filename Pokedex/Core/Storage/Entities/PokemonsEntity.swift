@@ -25,6 +25,8 @@ class PokemonsEntity: Hashable, Identifiable {
 
     var imageURL: String?
     var imageShinyURL: String?
+    
+    var isLegendary: Bool
 
     @Relationship(deleteRule: .cascade, inverse: \PokemonTypeEntity.pokemon)
     var types: [PokemonTypeEntity] = []
@@ -44,6 +46,7 @@ class PokemonsEntity: Hashable, Identifiable {
         generation: String?,
         flavorText: String?,
         evolutionTrigger: String?,
+        isLegendary: Bool,
         types: [PokemonType],
         nextEvolution: [NextEvolution]?
     ) {
@@ -56,6 +59,7 @@ class PokemonsEntity: Hashable, Identifiable {
         self.height = height
         self.weight = weight
         self.generation = generation
+        self.isLegendary = isLegendary
         self.flavorText = flavorText
         self.evolutionTrigger = evolutionTrigger
 

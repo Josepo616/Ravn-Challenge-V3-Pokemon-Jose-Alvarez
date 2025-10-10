@@ -24,8 +24,17 @@ struct ImageHeaderSection: View {
                         .tag(1)
                 }
             }
-
             .tabViewStyle(.page(indexDisplayMode: .never))
+
+            if pokemon.isLegendary {
+                ZStack {
+                    Image("Legendary")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .position(x: UIScreen.main.bounds.width - 40, y: 40)
+                }
+            }
+
 
             HStack {
                 Button(action: { selectedTab = 0 }) {
