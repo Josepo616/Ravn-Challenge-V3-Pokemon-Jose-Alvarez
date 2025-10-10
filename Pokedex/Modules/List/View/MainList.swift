@@ -28,6 +28,7 @@ struct MainList: View {
 
                     PokemonListView(
                         isSearching: $listVM.isFetchingData,
+                        isSearchingMore: $listVM.isFetchingMore,
                         pokemons: listVM.filteredPokemons,
                         listVM: listVM,
                         showEmptyState: showEmptyState

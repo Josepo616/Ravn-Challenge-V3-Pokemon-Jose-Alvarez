@@ -99,10 +99,6 @@ class ListVM: ObservableObject {
         isFetchingMore = true
         offset += limit
 
-        await MainActor.run {
-            self.isFetchingMore = false
-        }
-
         do {
             let newPokemons = try await repository.fetchAndStorePokemons(
                 offset: offset,
@@ -120,5 +116,6 @@ class ListVM: ObservableObject {
         } catch {
             print("Error fetching more Pokémons: \(error.localizedDescription)")
         }
+        isFetchingMore = false
     }
 }

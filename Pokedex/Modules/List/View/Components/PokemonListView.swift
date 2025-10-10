@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PokemonListView: View {
     @Binding var isSearching: Bool
+    @Binding var isSearchingMore: Bool
     let pokemons: [PokemonsEntity]
     let listVM: ListVM
     let showEmptyState: Bool
@@ -32,17 +33,19 @@ struct PokemonListView: View {
                         .buttonStyle(PlainButtonStyle())
                         .onAppear {
                             if pokemon == pokemons.last {
+                                print("Last Pokémon reached, calling loadMorePokemons()")
                                 Task {
                                     await listVM.loadMorePokemons()
                                 }
                             }
                         }
                     }
-                    if listVM.isFetchingMore {
+                    if isSearchingMore {
                         Text("Loading more Pokémon...")
                             .font(.headline)
                             .foregroundColor(.gray)
                             .padding()
+                        ProgressView()
                     }
                 }
             }
