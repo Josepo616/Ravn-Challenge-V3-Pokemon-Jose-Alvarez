@@ -12,16 +12,16 @@ class ListVM: ObservableObject {
     @Published private(set) var pokemon: [PokemonsEntity] = []
     @Published private(set) var pokedex: [PokedexEntity] = []
     @Published private(set) var offset: Int = 0
-    @Published private(set) var isFetchingMore: Bool = false
+    @Published var isFetchingMore: Bool = false
     @Published var filteredPokemons: [PokemonsEntity] = []
     @Published var isSearching: Bool = false
     @Published var isFetchingData: Bool = false
     @Published var searchQuery: String = ""
     @Published var fetchError: PokemonError?
     private let limit: Int = 50
-    private let repository: PokemonRepository
+    private let repository: PokemonRepositoryProtocol
 
-    init(repository: PokemonRepository) {
+    init(repository: PokemonRepositoryProtocol) {
         self.repository = repository
     }
 
@@ -30,19 +30,24 @@ class ListVM: ObservableObject {
         isFetchingData = true
         do {
             self.pokedex = try repository.fetchPokedexMetadata()
-            self.pokemon = try await repository.fetchAndStorePokemons()
+            self.pokemon = try await repository.fetchAndStorePokemons(
+                offset: 0,
+                limit: 50
+            )
             self.pokemon.sort { $0.id < $1.id }
             self.filteredPokemons = self.pokemon
             isFetchingData = false
         } catch {
-            if let urlError = error as? URLError, urlError.code == .notConnectedToInternet {
+            if let urlError = error as? URLError,
+                urlError.code == .notConnectedToInternet
+            {
                 throw PokemonError.connectivityIssue
             } else {
                 throw PokemonError.unknown
             }
         }
     }
-    
+
     func retryFetchPokemons() async {
         do {
             try await fetchPokemons()
@@ -50,7 +55,6 @@ class ListVM: ObservableObject {
             self.fetchError = error as? PokemonError ?? .unknown
         }
     }
-
 
     func formatID(_ id: Int) -> String {
         return String(format: "%04d", id)
@@ -89,16 +93,14 @@ class ListVM: ObservableObject {
 
     func loadMorePokemons() async {
         guard !isFetchingMore else { return }
-        
+
         guard !isSearching && searchQuery.isEmpty else { return }
 
         isFetchingMore = true
         offset += limit
-        
-        defer {
-            DispatchQueue.main.async {
-                self.isFetchingMore = false
-            }
+
+        await MainActor.run {
+            self.isFetchingMore = false
         }
 
         do {
@@ -106,12 +108,12 @@ class ListVM: ObservableObject {
                 offset: offset,
                 limit: limit
             )
-            
+
             let sortedNew = newPokemons.sorted { $0.id < $1.id }
             let newUnique = sortedNew.filter { new in
                 !pokemon.contains(where: { $0.id == new.id })
             }
-            
+
             pokemon.append(contentsOf: newUnique)
             filteredPokemons.append(contentsOf: newUnique)
 

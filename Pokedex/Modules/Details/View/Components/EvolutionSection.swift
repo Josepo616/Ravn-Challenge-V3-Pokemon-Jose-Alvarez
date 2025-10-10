@@ -28,7 +28,7 @@ struct EvolutionSection: View {
                                     listVM: listVM
                                 )
 
-                                EvolutionArrowView(trigger: pokemon.evolutionTrigger)
+                                EvolutionArrowView(trigger: pokemon.evolutionTrigger ?? "")
 
                                 NavigationLink(
                                     destination: PokemonDetailView(

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EvolutionArrowView: View {
-    let trigger: String?
+    let trigger: String
 
     var body: some View {
         VStack {

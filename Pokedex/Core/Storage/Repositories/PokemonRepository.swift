@@ -4,17 +4,20 @@
 //
 //  Created by JoseAlvarez on 10/6/25.
 //
+
 import Foundation
 import SwiftData
 
 @MainActor
-final class PokemonRepository {
+final class PokemonRepository: PokemonRepositoryProtocol {
     private let context: ModelContext
     private let jsonDecoder = JSONDecoder()
     private var fetchError: Error?
+    private let session: URLSession
 
-    init(context: ModelContext) {
+    init(context: ModelContext, session: URLSession = .shared) {
         self.context = context
+        self.session = session
     }
 
     // MARK: - Public Methods
@@ -84,7 +87,6 @@ final class PokemonRepository {
         return fetchError
     }
 
-    
     func updateComponentProperty<T>(
         componentType: T.Type,
         propertyKey: WritableKeyPath<T, String?>,
@@ -108,7 +110,7 @@ final class PokemonRepository {
         return try context.fetch(descriptor)
     }
 
-    // MARK: - Private Helper Methods
+    // MARK: - Private Helpers (unchanged logic, but uses injected session in getData)
 
     private func fetchLocalPokemons(offset: Int, limit: Int) throws
         -> [PokemonsEntity]?
@@ -149,8 +151,7 @@ final class PokemonRepository {
         return newPokemons
     }
 
-    private func fetchLocalPokemon(byUrl url: String) throws -> PokemonsEntity?
-    {
+    private func fetchLocalPokemon(byUrl url: String) throws -> PokemonsEntity? {
         let descriptor = FetchDescriptor<PokemonsEntity>(
             predicate: #Predicate { $0.url == url }
         )
@@ -200,7 +201,7 @@ final class PokemonRepository {
             weight: detail.weight,
             generation: species.generation.name,
             flavorText: species.englishFlavorText,
-            evolutionTrigger: nextEvolutions.first?.triggerName,
+            evolutionTrigger: nextEvolutions.first?.triggerName ?? "",
             types: detail.types,
             nextEvolution: nextEvolutions
         )
@@ -228,7 +229,7 @@ final class PokemonRepository {
             throw URLError(.badURL)
         }
 
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let (data, response) = try await session.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse,
             (200...299).contains(httpResponse.statusCode)
@@ -238,8 +239,6 @@ final class PokemonRepository {
 
         return try jsonDecoder.decode(T.self, from: data)
     }
-
-    // MARK: - Linked Resource Fetch Helper
 
     private func fetchLinkedResources<
         T1: Decodable,

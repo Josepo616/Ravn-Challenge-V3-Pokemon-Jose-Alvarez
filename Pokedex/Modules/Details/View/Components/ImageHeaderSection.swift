@@ -24,6 +24,7 @@ struct ImageHeaderSection: View {
                         .tag(1)
                 }
             }
+
             .tabViewStyle(.page(indexDisplayMode: .never))
 
             HStack {
