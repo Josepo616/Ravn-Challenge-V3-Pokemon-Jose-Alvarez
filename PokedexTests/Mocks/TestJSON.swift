@@ -50,6 +50,7 @@ enum TestJSON {
             "color": ["name": "green"],
             "generation": ["name": "generation-i"],
             "evolution_chain": ["url": "https://pokeapi.co/api/v2/evolution-chain/1/"],
+            "is_legendary": false,
             "flavor_text_entries": [
                 [
                     "flavor_text": "A strange seed was planted on its back at birth.\nThe plant sprouts and grows with this Pokémon.",

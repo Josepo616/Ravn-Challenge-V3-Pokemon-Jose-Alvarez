@@ -282,6 +282,7 @@ private func makePokemon(name: String, id: Int) -> PokemonsEntity {
         generation: nil,
         flavorText: nil,
         evolutionTrigger: nil,
+        isLegendary: true,
         types: [],
         nextEvolution: nil
     )

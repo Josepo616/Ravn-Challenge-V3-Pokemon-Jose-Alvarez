@@ -54,8 +54,6 @@ struct PokemonListView: View {
 
         if isSearching {
             ZStack {
-                Color.white.opacity(0.5)
-                    .edgesIgnoringSafeArea(.all)
 
                 ProgressView()
                     .scaleEffect(2)

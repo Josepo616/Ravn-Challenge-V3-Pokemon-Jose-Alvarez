@@ -25,7 +25,13 @@ struct MainList: View {
                         onSearchChange: handleSearchChange,
                         onClearSearch: clearSearch
                     )
-
+                    if activeAlert == .initialLoad {
+                        Image("Error")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 200, height: 200)
+                            .offset(y: -30)
+                    }
                     PokemonListView(
                         isSearching: $listVM.isFetchingData,
                         isSearchingMore: $listVM.isFetchingMore,
@@ -47,19 +53,18 @@ struct MainList: View {
                 case .initialLoad:
                     return Alert(
                         title: Text("Connectivity Issue"),
-                        message: Text(listVM.fetchError?.localizedDescription ?? "An unknown error occurred."),
+                        message: Text(
+                            listVM.fetchError?.localizedDescription
+                                ?? "An unknown error occurred."
+                        ),
                         primaryButton: .default(Text("Try Again")) {
                             listVM.fetchError = nil
                             activeAlert = nil
                             Task {
                                 do {
                                     listVM.isFetchingData = true
-                                    try await listVM.fetchPokemons()
+                                    await listVM.retryFetchPokemons()
                                     listVM.isFetchingData = false
-                                } catch {
-                                    listVM.fetchError = .connectivityIssue
-                                    listVM.isFetchingData = false
-                                    activeAlert = .initialLoad
                                 }
                             }
                         },
@@ -67,11 +72,13 @@ struct MainList: View {
                             activeAlert = nil
                         }
                     )
-                    
+
                 case .searchEmpty:
                     return Alert(
                         title: Text("There was an Error"),
-                        message: Text(PokemonError.searchEmpty.localizedDescription),
+                        message: Text(
+                            PokemonError.searchEmpty.localizedDescription
+                        ),
                         dismissButton: .default(Text("OK")) {
                             showEmptyState = true
                             activeAlert = nil
@@ -92,7 +99,7 @@ struct MainList: View {
                 }
             }
             .onChange(of: listVM.searchQuery) { _, newQuery in
-                if !newQuery.isEmpty && !listVM.filteredPokemons.isEmpty{
+                if !newQuery.isEmpty && !listVM.filteredPokemons.isEmpty {
                     showEmptyState = false
                 }
             }
