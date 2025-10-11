@@ -27,7 +27,11 @@ The application supports:
 
 The app is structured using the MVVM + Repository pattern and built on top of SwiftData for persistence.
 
-> *Images for general overview of the architecture*
+>
+#### App Architecture
+
+<img src="https://github.com/Josepo616/Ravn-Challenge-V3-Pokemon-Jose-Alvarez/blob/ios-nerdery-ravn-final-challenge/Images/Project%20Architecture.png" alt="App Architecture" width="400" />
+
 
 ### 🔹 Layers
 
@@ -101,13 +105,34 @@ Tests include unit coverage for `ListVM` and the repository using mock data and 
 
 ## Gifs / Screenshots
 
-> *Images for gifs, screenshots, or videos of the working application*
+> 
 
-You may include:
+#### 1. **Initial Error Screen**
+This image shows what the user will see when an error occurs, possibly during an API call failure or network issue.
 
-- A demo video showing search and pagination
-- Screenshot grid of Pokémon cards
-- A detail view showing evolution chain
+<img src="https://github.com/Josepo616/Ravn-Challenge-V3-Pokemon-Jose-Alvarez/blob/ios-nerdery-ravn-final-challenge/Images/Initial%20Error%20Screen.png" alt="Initial Error Screen" width="400" />
+
+#### 2. **Failed Search Screen**
+This screen is shown when the user searches for a Pokémon and the system cannot find any matching results.
+
+<img src="https://github.com/Josepo616/Ravn-Challenge-V3-Pokemon-Jose-Alvarez/blob/ios-nerdery-ravn-final-challenge/Images/Failed%20Search%20Screen.png" alt="Failed Search Screen" width="400" />
+
+#### 3. **Main List Screen**
+This is the main screen where users can see a list of Pokémon cards, which can be paginated and filtered based on the search term.
+
+<img src="https://github.com/Josepo616/Ravn-Challenge-V3-Pokemon-Jose-Alvarez/blob/ios-nerdery-ravn-final-challenge/Images/Main%20List%20Screen.png" alt="Main List Screen" width="400" />
+
+#### 4. **Pokemon Detail Screen**
+This screen displays detailed information about an individual Pokémon, such as its stats, evolution chain, and type indicators.
+
+<img src="https://github.com/Josepo616/Ravn-Challenge-V3-Pokemon-Jose-Alvarez/blob/ios-nerdery-ravn-final-challenge/Images/Pokemon%20Detail%20Screen.png" alt="Pokemon Detail Screen" width="400" />
+
+#### 5. **Detail Flow Video**
+A short video demonstrating the flow from the main list to the Pokémon detail screen, showing the user experience when interacting with the app.
+
+[Detail Flow Video](https://github.com/Josepo616/Ravn-Challenge-V3-Pokemon-Jose-Alvarez/blob/ios-nerdery-ravn-final-challenge/Gif/Detail%20Flow.mp4)
+
+---
 
 ## Assumptions & Design Choices
 
@@ -151,6 +176,6 @@ Tests cover:
 
 ## Author
 
-**Jose Alvarez**  
+**José Álvarez**  
 Software Engineer  
 [GitHub Profile](https://github.com/josepo616)
