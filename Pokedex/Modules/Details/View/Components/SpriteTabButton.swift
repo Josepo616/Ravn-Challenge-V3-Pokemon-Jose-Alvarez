@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct SpriteTabButton: View {
+    @Binding var selectedTab: Int
     let title: String
     let index: Int
-    @Binding var selectedTab: Int
 
     var body: some View {
         Button(action: {

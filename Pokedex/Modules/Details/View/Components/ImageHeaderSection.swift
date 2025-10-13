@@ -30,14 +30,14 @@ struct ImageHeaderSection: View {
 
             HStack {
                 SpriteTabButton(
+                    selectedTab: $selectedTab,
                     title: "Default Sprite",
-                    index: 0,
-                    selectedTab: $selectedTab
+                    index: 0
                 )
                 SpriteTabButton(
+                    selectedTab: $selectedTab,
                     title: "Shiny Sprite",
-                    index: 1,
-                    selectedTab: $selectedTab
+                    index: 1
                 )
             }
             .background(Color("TabBarBackground").opacity(0.4))

@@ -11,7 +11,7 @@ struct PokemonDetailView: View {
     @State private var nextEvolutions: [PokemonsEntity] = []
     @State private var selectedTab = 0
     let pokemon: PokemonsEntity
-    var listVM: ListVM
+    let listVM: ListVM
 
     var body: some View {
         ScrollView(showsIndicators: false) {

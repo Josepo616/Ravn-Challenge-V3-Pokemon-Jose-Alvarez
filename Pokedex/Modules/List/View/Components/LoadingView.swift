@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LoadingView: View {
-    var text: String
+    let text: String
 
     var body: some View {
         VStack {
