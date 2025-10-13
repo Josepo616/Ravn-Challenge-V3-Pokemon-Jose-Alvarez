@@ -14,52 +14,55 @@ struct PokemonListView: View {
     let listVM: ListVM
     let showEmptyState: Bool
 
+    private var generationLabel: String {
+        guard let first = pokemons.first else { return "" }
+        return listVM.fixGeneration(first.generation ?? "")
+    }
+
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                if showEmptyState {
-                    EmptyStateView()
-                } else {
-                    ForEach(pokemons, id: \.self) { pokemon in
-                        NavigationLink(
-                            destination: PokemonDetailView(
-                                pokemon: pokemon,
-                                listVM: listVM
-                            )
-                            .toolbarRole(.editor)
-                        ) {
-                            PokemonRowView(pokemon: pokemon, listVM: listVM)
+        ZStack {
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    if showEmptyState {
+                        EmptyStateView()
+                    } else {
+                        if !generationLabel.isEmpty {
+                            Text(generationLabel)
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .onAppear {
-                            if pokemon == pokemons.last {
-                                print("Last Pokémon reached, calling loadMorePokemons()")
-                                Task {
-                                    await listVM.loadMorePokemons()
-                                }
+
+                        ForEach(pokemons, id: \.self) { pokemon in
+                            NavigationLink(
+                                destination: PokemonDetailView(
+                                    pokemon: pokemon,
+                                    listVM: listVM
+                                )
+                                .toolbarRole(.editor)
+                            ) {
+                                PokemonRowView(pokemon: pokemon, listVM: listVM)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .onLastItemAppear(
+                                currentItem: pokemon,
+                                lastItem: pokemons.last
+                            ) {
+                                await listVM.loadMorePokemons()
                             }
                         }
-                    }
-                    if isSearchingMore {
-                        Text("Loading more Pokémon...")
-                            .font(.headline)
-                            .foregroundColor(.gray)
-                            .padding()
-                        ProgressView()
+
+                        if isSearchingMore {
+                            LoadingView(text: "Loading more Pokémon...")
+                        }
                     }
                 }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
-        }
 
-        if isSearching {
-            ZStack {
-
+            if isSearching {
                 ProgressView()
                     .scaleEffect(2)
                     .progressViewStyle(CircularProgressViewStyle())
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .offset(y: -250)
+                    .offset(y: -50)
             }
         }
     }

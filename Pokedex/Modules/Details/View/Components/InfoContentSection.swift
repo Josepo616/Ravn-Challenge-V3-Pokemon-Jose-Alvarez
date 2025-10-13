@@ -10,7 +10,6 @@ import SwiftUI
 struct InfoContentSection: View {
     let listVM: ListVM
     let pokemon: PokemonsEntity
-    let generationFixed: String
     let nextEvolutions: [PokemonsEntity]
     
     var body: some View {
@@ -23,7 +22,7 @@ struct InfoContentSection: View {
             TypeTagsSection(pokemon: pokemon)
                 .padding(.bottom, -30)
             
-            Text(generationFixed)
+            Text(listVM.fixGeneration(pokemon.generation ?? "Unknown"))
                 .font(.system(size: 17))
                 .padding(.bottom, 10)
             

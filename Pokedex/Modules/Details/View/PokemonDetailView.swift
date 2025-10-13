@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct PokemonDetailView: View {
-    @State private var generationFixed = ""
     @State private var nextEvolutions: [PokemonsEntity] = []
     @State private var selectedTab = 0
     let pokemon: PokemonsEntity
@@ -31,29 +30,14 @@ struct PokemonDetailView: View {
                 InfoContentSection(
                     listVM: listVM,
                     pokemon: pokemon,
-                    generationFixed: generationFixed,
                     nextEvolutions: nextEvolutions
                 )
             }
         }
         .navigationTitle("Pokemon Info")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            if let generation = pokemon.generation {
-                generationFixed = generation
-                    .components(separatedBy: "-")
-                    .enumerated()
-                    .map { index, element in
-                        return index == 1 ? element.uppercased() : element.capitalized
-                    }
-                    .joined(separator: " ")
-            } else {
-                generationFixed = "Unknown"
-            }
-
-            Task {
-                await loadNextEvolutions()
-            }
+        .task {
+            await loadNextEvolutions()
         }
     }
 

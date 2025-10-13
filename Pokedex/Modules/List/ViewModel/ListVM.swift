@@ -48,11 +48,12 @@ class ListVM: ObservableObject {
         }
     }
 
-    func retryFetchPokemons() async {
+    func retryFetch() async {
+        fetchError = nil
         do {
             try await fetchPokemons()
         } catch {
-            self.fetchError = error as? PokemonError ?? .unknown
+            fetchError = .connectivityIssue
         }
     }
 
@@ -117,5 +118,17 @@ class ListVM: ObservableObject {
             print("Error fetching more Pokémons: \(error.localizedDescription)")
         }
         isFetchingMore = false
+    }
+
+    func fixGeneration(_ generation: String) -> String {
+        return
+            generation
+            .components(separatedBy: "-")
+            .enumerated()
+            .map { index, element in
+                return index == 1
+                    ? element.uppercased() : element.capitalized
+            }
+            .joined(separator: " ")
     }
 }

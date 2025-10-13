@@ -11,8 +11,8 @@ enum AlertType: Identifiable {
 
     var id: Int {
         switch self {
-        case .initialLoad: return 0
-        case .searchEmpty: return 1
+        case .initialLoad: return 1
+        case .searchEmpty: return 2
         }
     }
 }

@@ -13,77 +13,51 @@ struct MainList: View {
     @Binding var searchQuery: String
     @State private var activeAlert: AlertType? = nil
     @State private var showEmptyState = false
-    @State private var lastSearchQuery: String = ""
-
+    
     var body: some View {
         NavigationStack {
-            ZStack {
-                VStack(spacing: 0) {
-                    SearchHeaderView(
-                        searchQuery: $searchQuery,
-                        isSearching: $listVM.isSearching,
-                        onSearchChange: handleSearchChange,
-                        onClearSearch: clearSearch
-                    )
-                    if activeAlert == .initialLoad {
-                        Image("Error")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 200, height: 200)
-                            .offset(y: -30)
-                    }
-                    PokemonListView(
-                        isSearching: $listVM.isFetchingData,
-                        isSearchingMore: $listVM.isFetchingMore,
-                        pokemons: listVM.filteredPokemons,
-                        listVM: listVM,
-                        showEmptyState: showEmptyState
-                    )
+            VStack(spacing: 0) {
+                SearchHeaderView(
+                    searchQuery: $searchQuery,
+                    isSearching: $listVM.isSearching,
+                    onSearchChange: listVM.handleSearchChange,
+                    onClearSearch: clearSearch
+                )
+                
+                if activeAlert == .initialLoad {
+                    ImageListErrorView()
                 }
+                
+                PokemonListView(
+                    isSearching: $listVM.isFetchingData,
+                    isSearchingMore: $listVM.isFetchingMore,
+                    pokemons: listVM.filteredPokemons,
+                    listVM: listVM,
+                    showEmptyState: showEmptyState
+                )
             }
             .task {
-                do {
-                    try await listVM.fetchPokemons()
-                } catch {
-                    listVM.fetchError = .connectivityIssue
-                }
+                await listVM.retryFetch()
             }
             .alert(item: $activeAlert) { alertType in
                 switch alertType {
                 case .initialLoad:
-                    return Alert(
-                        title: Text("Connectivity Issue"),
-                        message: Text(
-                            listVM.fetchError?.localizedDescription
-                                ?? "An unknown error occurred."
-                        ),
-                        primaryButton: .default(Text("Try Again")) {
-                            listVM.fetchError = nil
+                    return AlertBuilder.initialLoadAlert(
+                        fetchError: listVM.fetchError ?? PokemonError.connectivityIssue,
+                        retryAction: {
+                            Task { await listVM.retryFetch() }
                             activeAlert = nil
-                            Task {
-                                do {
-                                    listVM.isFetchingData = true
-                                    await listVM.retryFetchPokemons()
-                                    listVM.isFetchingData = false
-                                }
-                            }
                         },
-                        secondaryButton: .cancel {
+                        cancelAction: {
                             activeAlert = nil
                         }
                     )
-
+                    
                 case .searchEmpty:
-                    return Alert(
-                        title: Text("There was an Error"),
-                        message: Text(
-                            PokemonError.searchEmpty.localizedDescription
-                        ),
-                        dismissButton: .default(Text("OK")) {
-                            showEmptyState = true
-                            activeAlert = nil
-                        }
-                    )
+                    return AlertBuilder.searchEmptyAlert {
+                        showEmptyState = true
+                        activeAlert = nil
+                    }
                 }
             }
             .onChange(of: listVM.fetchError) { _, error in
@@ -104,10 +78,6 @@ struct MainList: View {
                 }
             }
         }
-    }
-
-    private func handleSearchChange(_ newValue: String) {
-        listVM.handleSearchChange(newValue)
     }
 
     private func clearSearch() {
