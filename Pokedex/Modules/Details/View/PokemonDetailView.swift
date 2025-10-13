@@ -37,24 +37,7 @@ struct PokemonDetailView: View {
         .navigationTitle("Pokemon Info")
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            await loadNextEvolutions()
-        }
-    }
-
-    func loadNextEvolutions() async {
-        guard !pokemon.nextEvolutions.isEmpty else { return }
-
-        var evolutionsLoaded: [PokemonsEntity] = []
-
-        for evolution in pokemon.nextEvolutions {
-            let evolutionName = evolution.name
-            if let fetched = await listVM.fetchPokemon(by: evolutionName) {
-                evolutionsLoaded.append(fetched)
-            }
-        }
-
-        await MainActor.run {
-            nextEvolutions = evolutionsLoaded
+            nextEvolutions = await listVM.fetchNextEvolutions(for: pokemon)
         }
     }
 }

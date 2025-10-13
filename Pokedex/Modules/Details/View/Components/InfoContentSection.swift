@@ -14,11 +14,10 @@ struct InfoContentSection: View {
     
     var body: some View {
         VStack(spacing: 0.0000001) {
-            Text(
-                "#\(listVM.formatID(pokemon.id)) \(pokemon.name.capitalized)"
-            )
+            Text(pokemon.displayName)
             .font(.system(size: 28))
             .padding(.bottom, -50)
+            
             TypeTagsSection(pokemon: pokemon)
                 .padding(.bottom, -30)
             
@@ -32,10 +31,7 @@ struct InfoContentSection: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 10)
             
-            Text([
-                pokemon.weight != 0 ? "Weight: \(pokemon.weight.formattedString()) kg" : nil,
-                pokemon.height != 0 ? "Height: \(pokemon.height.formattedString()) m" : nil
-            ].compactMap { $0 }.joined(separator: ", "))
+            Text(pokemon.formattedPhysicalInfo)
 
             if !nextEvolutions.isEmpty {
                 Divider()

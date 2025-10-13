@@ -20,7 +20,7 @@ struct PokemonEvolutionCard: View {
             )
             Text(pokemon.name.capitalized)
                 .font(.system(size: 15))
-            Text("#\(listVM.formatID(pokemon.id))")
+            Text("#\(pokemon.formattedId)")
                 .font(.system(size: 13))
         }
     }

@@ -24,9 +24,7 @@ struct PokemonRowView: View {
                     placeholderImage: "Error"
                 )
                 PokemonInfoView(
-                    name: pokemon.name,
-                    id: pokemon.id,
-                    listVM: listVM
+                    pokemon: pokemon
                 )
                 .padding(.leading, 4)
                 Spacer()

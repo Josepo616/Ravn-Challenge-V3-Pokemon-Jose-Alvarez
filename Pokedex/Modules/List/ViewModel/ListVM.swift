@@ -57,10 +57,6 @@ class ListVM: ObservableObject {
         }
     }
 
-    func formatID(_ id: Int) -> String {
-        return String(format: "%04d", id)
-    }
-
     func handleSearchChange(_ searchQuery: String) {
         self.searchQuery = searchQuery
         if searchQuery.isEmpty {
@@ -131,4 +127,20 @@ class ListVM: ObservableObject {
             }
             .joined(separator: " ")
     }
+    
+    func fetchNextEvolutions(for pokemon: PokemonsEntity) async -> [PokemonsEntity] {
+        guard !pokemon.nextEvolutions.isEmpty else { return [] }
+
+        var evolutions: [PokemonsEntity] = []
+
+        for evolution in pokemon.nextEvolutions {
+            let evolutionName = evolution.name
+            if let fetched = await fetchPokemon(by: evolutionName) {
+                evolutions.append(fetched)
+            }
+        }
+
+        return evolutions
+    }
+
 }

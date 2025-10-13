@@ -22,28 +22,11 @@ struct EvolutionSection: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 20) {
                         ForEach(nextEvolutions, id: \.id) { evolution in
-                            HStack(spacing: 16) {
-                                PokemonEvolutionCard(
-                                    pokemon: pokemon,
-                                    listVM: listVM
-                                )
-
-                                EvolutionArrowView(trigger: pokemon.evolutionTrigger ?? "")
-
-                                NavigationLink(
-                                    destination: PokemonDetailView(
-                                        pokemon: evolution,
-                                        listVM: listVM
-                                    )
-                                    .toolbarRole(.editor)
-                                ) {
-                                    PokemonEvolutionCard(
-                                        pokemon: evolution,
-                                        listVM: listVM
-                                    )
-                                }
-                                .buttonStyle(.plain)
-                            }
+                            EvolutionRowView(
+                                basePokemon: pokemon,
+                                evolution: evolution,
+                                listVM: listVM
+                            )
                         }
                     }
                     .padding(.vertical, 8)

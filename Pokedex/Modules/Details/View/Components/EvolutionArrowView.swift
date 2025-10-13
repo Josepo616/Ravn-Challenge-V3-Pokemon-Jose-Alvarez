@@ -12,7 +12,7 @@ struct EvolutionArrowView: View {
 
     var body: some View {
         VStack {
-            Text(trigger ?? "Unknown".capitalized)
+            Text(trigger.capitalized)
                 .font(.system(size: 15))
             Image(systemName: "arrow.right")
                 .font(.system(size: 20))

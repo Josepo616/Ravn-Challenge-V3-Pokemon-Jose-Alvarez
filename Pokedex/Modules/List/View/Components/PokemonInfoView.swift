@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct PokemonInfoView: View {
-    let name: String
-    let id: Int
-    let listVM: ListVM
+    let pokemon: PokemonsEntity
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(name.capitalized)
+            Text(pokemon.name.capitalized)
                 .font(.headline)
-            Text("#\(listVM.formatID(id))")
+            Text("#\(pokemon.formattedId)")
                 .font(.subheadline)
         }
     }
