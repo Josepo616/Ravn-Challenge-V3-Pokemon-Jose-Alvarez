@@ -34,11 +34,8 @@ struct InfoContentSection: View {
             Text(pokemon.formattedPhysicalInfo)
 
             if !nextEvolutions.isEmpty {
-                Divider()
-                    .frame(height: 1)
-                    .background(Color.gray.opacity(0.5))
-                    .padding(.vertical, 8)
-                
+                StandardDivider()
+
                 EvolutionSection(
                     listVM: listVM,
                     pokemon: pokemon,

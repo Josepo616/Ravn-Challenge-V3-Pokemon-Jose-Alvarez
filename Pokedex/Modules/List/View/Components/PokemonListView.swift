@@ -14,9 +14,10 @@ struct PokemonListView: View {
     let listVM: ListVM
     let showEmptyState: Bool
 
-    private var generationLabel: String {
-        guard let first = pokemons.first else { return "" }
-        return listVM.fixGeneration(first.generation ?? "")
+    var groupedPokemons: [(generation: String, pokemons: [PokemonsEntity])] {
+        Dictionary(grouping: pokemons, by: { $0.generation ?? "Unknown" })
+            .sorted(by: { $0.key < $1.key })
+            .map { (generation: $0.key, pokemons: $0.value) }
     }
 
     var body: some View {
@@ -26,29 +27,35 @@ struct PokemonListView: View {
                     if showEmptyState {
                         EmptyStateView()
                     } else {
-                        if !generationLabel.isEmpty {
-                            Text(generationLabel)
-                        }
 
-                        ForEach(pokemons, id: \.self) { pokemon in
-                            NavigationLink(
-                                destination: PokemonDetailView(
-                                    pokemon: pokemon,
-                                    listVM: listVM
-                                )
-                                .toolbarRole(.editor)
-                            ) {
-                                PokemonRowView(pokemon: pokemon, listVM: listVM)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            .onLastItemAppear(
-                                currentItem: pokemon,
-                                lastItem: pokemons.last
-                            ) {
-                                await listVM.loadMorePokemons()
+                        ForEach(groupedPokemons, id: \.generation) { group in
+                            GenerationTitleView(
+                                generation: group.generation,
+                                listVM: listVM
+                            )
+
+                            ForEach(group.pokemons, id: \.self) { pokemon in
+                                NavigationLink(
+                                    destination: PokemonDetailView(
+                                        pokemon: pokemon,
+                                        listVM: listVM
+                                    )
+                                    .toolbarRole(.editor)
+                                ) {
+                                    PokemonRowView(
+                                        pokemon: pokemon,
+                                        listVM: listVM
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .onLastItemAppear(
+                                    currentItem: pokemon,
+                                    lastItem: pokemons.last
+                                ) {
+                                    await listVM.loadMorePokemons()
+                                }
                             }
                         }
-
                         if isSearchingMore {
                             LoadingView(text: "Loading more Pokémon...")
                         }
