@@ -5,7 +5,6 @@
 //  Created by JoseAlvarez on 10/13/25.
 //
 
-
 import SwiftUI
 
 struct StandardDivider: View {

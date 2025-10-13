@@ -9,9 +9,11 @@ import SwiftUI
 
 struct LegendaryBadge: View {
     var body: some View {
-        Image("Legendary")
-            .resizable()
-            .frame(width: 30, height: 30)
-            .position(x: UIScreen.main.bounds.width - 40, y: 40)
+        GeometryReader { geometry in
+            Image("Legendary")
+                .resizable()
+                .frame(width: 30, height: 30)
+                .position(x: geometry.size.width - 40, y: 40)
+        }
     }
 }
