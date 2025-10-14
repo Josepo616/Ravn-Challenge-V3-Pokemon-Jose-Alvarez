@@ -8,22 +8,22 @@
 import SwiftUI
 
 struct EvolutionRowView: View {
-    let basePokemon: PokemonsEntity
-    let evolution: PokemonsEntity
-    let listVM: ListVM
+    let basePokemon: PokemonUIModel
+    let evolution: PokemonUIModel
+    let detailVM: PokemonDetailVM
 
     var body: some View {
         HStack(spacing: 16) {
-            PokemonEvolutionCard(pokemon: basePokemon, listVM: listVM)
+            PokemonEvolutionCard(pokemon: basePokemon, detailVM: detailVM)
             EvolutionArrowView(trigger: basePokemon.evolutionTrigger ?? "Unknown")
             NavigationLink(
                 destination: PokemonDetailView(
                     pokemon: evolution,
-                    listVM: listVM
+                    detailVM: detailVM
                 )
                 .toolbarRole(.editor)
             ) {
-                PokemonEvolutionCard(pokemon: evolution, listVM: listVM)
+                PokemonEvolutionCard(pokemon: evolution, detailVM: detailVM)
             }
             .buttonStyle(.plain)
         }

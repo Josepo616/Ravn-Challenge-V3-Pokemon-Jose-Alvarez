@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PokemonRowView: View {
-    let pokemon: PokemonsEntity
+    let pokemon: PokemonUIModel
     let listVM: ListVM
 
     var body: some View {

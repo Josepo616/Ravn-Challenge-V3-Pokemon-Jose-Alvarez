@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct EvolutionSection: View {
-    let listVM: ListVM
-    let pokemon: PokemonsEntity
-    let nextEvolutions: [PokemonsEntity]
+    let detailVM: PokemonDetailVM
+    let pokemon: PokemonUIModel
+    let nextEvolutions: [PokemonUIModel]
 
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
@@ -25,7 +25,7 @@ struct EvolutionSection: View {
                             EvolutionRowView(
                                 basePokemon: pokemon,
                                 evolution: evolution,
-                                listVM: listVM
+                                detailVM: detailVM
                             )
                         }
                     }

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct InfoContentSection: View {
-    let listVM: ListVM
-    let pokemon: PokemonsEntity
-    let nextEvolutions: [PokemonsEntity]
+    let detailVM: PokemonDetailVM
+    let pokemon: PokemonUIModel
+    let nextEvolutions: [PokemonUIModel]
     
     var body: some View {
         VStack(spacing: 0.0000001) {
@@ -21,7 +21,7 @@ struct InfoContentSection: View {
             TypeTagsSection(pokemon: pokemon)
                 .padding(.bottom, -30)
             
-            Text(listVM.fixGeneration(pokemon.generation ?? "Unknown"))
+            Text(detailVM.fixGeneration(pokemon.generation ?? "Unknown"))
                 .font(.system(size: 17))
                 .padding(.bottom, 10)
             
@@ -37,7 +37,7 @@ struct InfoContentSection: View {
                 StandardDivider()
 
                 EvolutionSection(
-                    listVM: listVM,
+                    detailVM: detailVM,
                     pokemon: pokemon,
                     nextEvolutions: nextEvolutions
                 )

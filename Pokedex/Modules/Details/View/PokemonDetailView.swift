@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct PokemonDetailView: View {
-    @State private var nextEvolutions: [PokemonsEntity] = []
+    @State private var nextEvolutions: [PokemonUIModel] = []
     @State private var selectedTab = 0
-    let pokemon: PokemonsEntity
-    let listVM: ListVM
+    let pokemon: PokemonUIModel
+    let detailVM: PokemonDetailVM
 
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
                 ZStack {
-                    Color(pokemon.color?.capitalized ?? "")
+                    Color(pokemon.color.capitalized)
                         .frame(height: 300)
                         .ignoresSafeArea(edges: .top)
 
@@ -28,7 +28,7 @@ struct PokemonDetailView: View {
                 }
 
                 InfoContentSection(
-                    listVM: listVM,
+                    detailVM: detailVM,
                     pokemon: pokemon,
                     nextEvolutions: nextEvolutions
                 )
@@ -37,7 +37,7 @@ struct PokemonDetailView: View {
         .navigationTitle("Pokemon Info")
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            nextEvolutions = await listVM.fetchNextEvolutions(for: pokemon)
+            nextEvolutions = await detailVM.fetchNextEvolutions(for: pokemon)
         }
     }
 }

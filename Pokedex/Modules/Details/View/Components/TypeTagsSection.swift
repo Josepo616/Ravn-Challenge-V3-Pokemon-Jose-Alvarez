@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TypeTagsSection: View {
-    let pokemon: PokemonsEntity
+    let pokemon: PokemonUIModel
 
     var body: some View {
         HStack {

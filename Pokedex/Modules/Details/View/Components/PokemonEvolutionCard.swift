@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct PokemonEvolutionCard: View {
-    let pokemon: PokemonsEntity
-    let listVM: ListVM
+    let pokemon: PokemonUIModel
+    let detailVM: PokemonDetailVM
 
     var body: some View {
         VStack(spacing: 6) {

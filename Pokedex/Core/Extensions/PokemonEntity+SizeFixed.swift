@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension PokemonsEntity {
+extension PokemonUIModel {
     var formattedWeight: String? {
         weight != 0 ? "\(weight.formattedString()) kg" : nil
     }

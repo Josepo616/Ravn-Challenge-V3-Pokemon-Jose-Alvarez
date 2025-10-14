@@ -9,11 +9,11 @@ import Foundation
 
 @MainActor
 class ListVM: ObservableObject {
-    @Published private(set) var pokemon: [PokemonsEntity] = []
+    @Published private(set) var pokemon: [PokemonUIModel] = []
     @Published private(set) var pokedex: [PokedexEntity] = []
     @Published private(set) var offset: Int = 0
     @Published var isFetchingMore: Bool = false
-    @Published var filteredPokemons: [PokemonsEntity] = []
+    @Published var filteredPokemons: [PokemonUIModel] = []
     @Published var isSearching: Bool = false
     @Published var isFetchingData: Bool = false
     @Published var searchQuery: String = ""
@@ -29,13 +29,18 @@ class ListVM: ObservableObject {
         if !self.pokemon.isEmpty { return }
         isFetchingData = true
         do {
-            self.pokedex = try repository.fetchPokedexMetadata()
-            self.pokemon = try await repository.fetchAndStorePokemons(
+            let pokedexEntities = try repository.fetchPokedexMetadata()
+            self.pokedex = pokedexEntities
+
+            let pokemonEntities = try await repository.fetchAndStorePokemons(
                 offset: 0,
-                limit: 50
+                limit: limit
             )
-            self.pokemon.sort { $0.id < $1.id }
+
+            self.pokemon = pokemonEntities.map { $0.toUIModel() }
+
             self.filteredPokemons = self.pokemon
+
             isFetchingData = false
         } catch {
             if let urlError = error as? URLError,
@@ -79,14 +84,16 @@ class ListVM: ObservableObject {
         searchQuery = ""
     }
 
-    func fetchPokemon(by name: String) async -> PokemonsEntity? {
+    func fetchPokemon(by name: String) async -> PokemonUIModel? {
         do {
-            let pokemon = try await repository.fetchPokemon(by: name)
-            return pokemon
+            guard let pokemonEntity = try await repository.fetchPokemon(by: name)
+            else { return nil }
+            return pokemonEntity.toUIModel()
         } catch {
             return nil
         }
     }
+
 
     func loadMorePokemons() async {
         guard !isFetchingMore else { return }
@@ -102,7 +109,10 @@ class ListVM: ObservableObject {
                 limit: limit
             )
 
-            let sortedNew = newPokemons.sorted { $0.id < $1.id }
+            let newPokemonUIModels = newPokemons.map { $0.toUIModel() }
+
+
+            let sortedNew = newPokemonUIModels.sorted { $0.id < $1.id }
             let newUnique = sortedNew.filter { new in
                 !pokemon.contains(where: { $0.id == new.id })
             }
@@ -122,25 +132,65 @@ class ListVM: ObservableObject {
             .components(separatedBy: "-")
             .enumerated()
             .map { index, element in
-                return index == 1
-                    ? element.uppercased() : element.capitalized
+                return index == 1 ? element.uppercased() : element.capitalized
             }
             .joined(separator: " ")
     }
-    
-    func fetchNextEvolutions(for pokemon: PokemonsEntity) async -> [PokemonsEntity] {
+
+    func fetchNextEvolutions(for pokemon: PokemonUIModel) async -> [PokemonUIModel] {
         guard !pokemon.nextEvolutions.isEmpty else { return [] }
 
-        var evolutions: [PokemonsEntity] = []
+        var evolutions: [PokemonUIModel] = []
 
-        for evolution in pokemon.nextEvolutions {
-            let evolutionName = evolution.name
-            if let fetched = await fetchPokemon(by: evolutionName) {
+        for evolutionName in pokemon.nextEvolutions {
+            if let fetched = await fetchPokemon(by: evolutionName.name) {
                 evolutions.append(fetched)
             }
         }
 
         return evolutions
+    }
+}
+
+// PokemonDetailVM.swift
+
+import Foundation
+
+@MainActor
+class PokemonDetailVM: ObservableObject {
+    @Published var nextEvolutions: [PokemonUIModel] = []
+    @Published var isFetchingEvolutions: Bool = false
+    @Published var fetchError: PokemonError?
+
+    private let listVM: ListVM
+
+    init(listVM: ListVM) {
+        self.listVM = listVM
+    }
+
+    func fetchNextEvolutions(for pokemon: PokemonUIModel) async -> [PokemonUIModel] {
+        guard !pokemon.nextEvolutions.isEmpty else { return [] }
+
+        var evolutions: [PokemonUIModel] = []
+
+        for evolutionName in pokemon.nextEvolutions {
+            if let fetched = await listVM.fetchPokemon(by: evolutionName.name) {
+                evolutions.append(fetched)
+            }
+        }
+
+        return evolutions
+    }
+    
+    func fixGeneration(_ generation: String) -> String {
+        return
+            generation
+            .components(separatedBy: "-")
+            .enumerated()
+            .map { index, element in
+                return index == 1 ? element.uppercased() : element.capitalized
+            }
+            .joined(separator: " ")
     }
 
 }

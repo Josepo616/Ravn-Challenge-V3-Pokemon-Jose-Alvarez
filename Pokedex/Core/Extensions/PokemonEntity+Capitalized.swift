@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension PokemonsEntity {
+extension PokemonUIModel {
     var formattedId: String {
         String(format: "%04d", id)
     }

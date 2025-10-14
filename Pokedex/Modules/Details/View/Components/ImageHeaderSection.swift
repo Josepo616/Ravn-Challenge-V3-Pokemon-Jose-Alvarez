@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ImageHeaderSection: View {
     @Binding var selectedTab: Int
-    let pokemon: PokemonsEntity
+    let pokemon: PokemonUIModel
 
     var body: some View {
         ZStack(alignment: .bottom) {

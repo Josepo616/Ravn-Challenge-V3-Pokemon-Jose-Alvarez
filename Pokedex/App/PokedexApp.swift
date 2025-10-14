@@ -17,6 +17,7 @@ struct PokedexApp: App {
     }()
 
     @StateObject private var listVM: ListVM
+    @State private var detailVM: PokemonDetailVM?
 
     init() {
         let context = sharedModelContainer.mainContext
@@ -26,7 +27,7 @@ struct PokedexApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainList(listVM: listVM, searchQuery: $listVM.searchQuery)
+            MainList(listVM: listVM, detailVM: PokemonDetailVM(listVM: listVM), searchQuery: $listVM.searchQuery)
         }
         .modelContainer(sharedModelContainer)
     }

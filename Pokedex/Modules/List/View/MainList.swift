@@ -10,6 +10,7 @@ import SwiftUI
 
 struct MainList: View {
     @ObservedObject var listVM: ListVM
+    @ObservedObject var detailVM: PokemonDetailVM
     @Binding var searchQuery: String
     @State private var activeAlert: AlertType? = nil
     @State private var showEmptyState = false
@@ -33,6 +34,7 @@ struct MainList: View {
                     isSearchingMore: $listVM.isFetchingMore,
                     pokemons: listVM.filteredPokemons,
                     listVM: listVM,
+                    detailVM: detailVM,
                     showEmptyState: showEmptyState
                 )
             }
