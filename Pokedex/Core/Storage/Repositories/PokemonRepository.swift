@@ -15,7 +15,7 @@ final class PokemonRepository: PokemonRepositoryProtocol {
     ) {
         self.context = context
         self.networkService = networkService
-        self.storageService = storageService ?? StorageService(context: context) // Asignación correcta
+        self.storageService = storageService ?? StorageService(context: context)
     }
 
     // MARK: - Public Methods
@@ -60,9 +60,6 @@ final class PokemonRepository: PokemonRepositoryProtocol {
         return fetchError
     }
 }
-
-
-import Foundation
 
 final class NetworkService {
     private let jsonDecoder = JSONDecoder()
@@ -176,9 +173,6 @@ final class NetworkService {
     }
 }
 
-import Foundation
-import SwiftData
-
 final class StorageService {
     private let context: ModelContext
 
@@ -220,6 +214,7 @@ final class StorageService {
             )
             context.insert(pokemon)
             newPokemons.append(pokemon)
+            try savePokemon(pokemon)
         }
     }
 
@@ -250,7 +245,9 @@ final class StorageService {
         return try context.fetch(descriptor).first
     }
 
-    private func sortedPokemonsById(_ pokemons: [PokemonsEntity]) -> [PokemonsEntity] {
+    private func sortedPokemonsById(_ pokemons: [PokemonsEntity])
+        -> [PokemonsEntity]
+    {
         return pokemons.sorted { $0.id < $1.id }
     }
 }
