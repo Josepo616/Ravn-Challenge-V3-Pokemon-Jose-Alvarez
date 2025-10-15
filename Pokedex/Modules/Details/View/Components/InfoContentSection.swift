@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct InfoContentSection: View {
-    let detailVM: PokemonDetailVM
+    let detailVM: DetailVM
     let pokemon: PokemonUIModel
     let nextEvolutions: [PokemonUIModel]
     

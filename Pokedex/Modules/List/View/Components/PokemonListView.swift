@@ -12,7 +12,7 @@ struct PokemonListView: View {
     @Binding var isSearchingMore: Bool
     let pokemons: [PokemonUIModel]
     let listVM: ListVM
-    let detailVM: PokemonDetailVM
+    let detailVM: DetailVM
     let showEmptyState: Bool
 
     var body: some View {

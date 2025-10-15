@@ -31,16 +31,12 @@ class ListVM: ObservableObject {
         do {
             let pokedexEntities = try repository.fetchPokedexMetadata()
             self.pokedex = pokedexEntities
-
             let pokemonEntities = try await repository.fetchAndStorePokemons(
                 offset: 0,
                 limit: limit
             )
-
             self.pokemon = pokemonEntities.map { $0.toUIModel() }
-
             self.filteredPokemons = self.pokemon
-
             isFetchingData = false
         } catch {
             if let urlError = error as? URLError,
@@ -94,7 +90,6 @@ class ListVM: ObservableObject {
         }
     }
 
-
     func loadMorePokemons() async {
         guard !isFetchingMore else { return }
 
@@ -102,21 +97,16 @@ class ListVM: ObservableObject {
 
         isFetchingMore = true
         offset += limit
-
         do {
             let newPokemons = try await repository.fetchAndStorePokemons(
                 offset: offset,
                 limit: limit
             )
-
             let newPokemonUIModels = newPokemons.map { $0.toUIModel() }
-
-
             let sortedNew = newPokemonUIModels.sorted { $0.id < $1.id }
             let newUnique = sortedNew.filter { new in
                 !pokemon.contains(where: { $0.id == new.id })
             }
-
             pokemon.append(contentsOf: newUnique)
             filteredPokemons.append(contentsOf: newUnique)
 
@@ -141,56 +131,11 @@ class ListVM: ObservableObject {
         guard !pokemon.nextEvolutions.isEmpty else { return [] }
 
         var evolutions: [PokemonUIModel] = []
-
         for evolutionName in pokemon.nextEvolutions {
             if let fetched = await fetchPokemon(by: evolutionName.name) {
                 evolutions.append(fetched)
             }
         }
-
         return evolutions
     }
-}
-
-// PokemonDetailVM.swift
-
-import Foundation
-
-@MainActor
-class PokemonDetailVM: ObservableObject {
-    @Published var nextEvolutions: [PokemonUIModel] = []
-    @Published var isFetchingEvolutions: Bool = false
-    @Published var fetchError: PokemonError?
-
-    private let listVM: ListVM
-
-    init(listVM: ListVM) {
-        self.listVM = listVM
-    }
-
-    func fetchNextEvolutions(for pokemon: PokemonUIModel) async -> [PokemonUIModel] {
-        guard !pokemon.nextEvolutions.isEmpty else { return [] }
-
-        var evolutions: [PokemonUIModel] = []
-
-        for evolutionName in pokemon.nextEvolutions {
-            if let fetched = await listVM.fetchPokemon(by: evolutionName.name) {
-                evolutions.append(fetched)
-            }
-        }
-
-        return evolutions
-    }
-    
-    func fixGeneration(_ generation: String) -> String {
-        return
-            generation
-            .components(separatedBy: "-")
-            .enumerated()
-            .map { index, element in
-                return index == 1 ? element.uppercased() : element.capitalized
-            }
-            .joined(separator: " ")
-    }
-
 }

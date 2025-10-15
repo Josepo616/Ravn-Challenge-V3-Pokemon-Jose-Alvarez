@@ -11,7 +11,7 @@ struct PokemonDetailView: View {
     @State private var nextEvolutions: [PokemonUIModel] = []
     @State private var selectedTab = 0
     let pokemon: PokemonUIModel
-    let detailVM: PokemonDetailVM
+    let detailVM: DetailVM
 
     var body: some View {
         ScrollView(showsIndicators: false) {

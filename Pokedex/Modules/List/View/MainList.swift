@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MainList: View {
     @ObservedObject var listVM: ListVM
-    @ObservedObject var detailVM: PokemonDetailVM
+    @ObservedObject var detailVM: DetailVM
     @Binding var searchQuery: String
     @State private var activeAlert: AlertType? = nil
     @State private var showEmptyState = false

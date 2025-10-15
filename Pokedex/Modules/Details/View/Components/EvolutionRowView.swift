@@ -10,7 +10,7 @@ import SwiftUI
 struct EvolutionRowView: View {
     let basePokemon: PokemonUIModel
     let evolution: PokemonUIModel
-    let detailVM: PokemonDetailVM
+    let detailVM: DetailVM
 
     var body: some View {
         HStack(spacing: 16) {

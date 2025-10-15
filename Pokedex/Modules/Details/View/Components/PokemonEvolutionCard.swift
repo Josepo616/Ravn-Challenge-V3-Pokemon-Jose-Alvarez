@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PokemonEvolutionCard: View {
     let pokemon: PokemonUIModel
-    let detailVM: PokemonDetailVM
+    let detailVM: DetailVM
 
     var body: some View {
         VStack(spacing: 6) {
