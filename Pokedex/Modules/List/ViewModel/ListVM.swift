@@ -31,7 +31,7 @@ class ListVM: ObservableObject {
         do {
             let pokedexEntities = try repository.fetchPokedexMetadata()
             self.pokedex = pokedexEntities
-            let pokemonEntities = try await repository.fetchAndStorePokemons(
+            let pokemonEntities = try await repository.loadPokemons(
                 offset: 0,
                 limit: limit
             )
@@ -98,7 +98,7 @@ class ListVM: ObservableObject {
         isFetchingMore = true
         offset += limit
         do {
-            let newPokemons = try await repository.fetchAndStorePokemons(
+            let newPokemons = try await repository.loadPokemons(
                 offset: offset,
                 limit: limit
             )
