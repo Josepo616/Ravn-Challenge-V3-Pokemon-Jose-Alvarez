@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-final class StorageService {
+final class StorageService: StorageServiceProtocol {
     private let context: ModelContext
 
     init(context: ModelContext) {

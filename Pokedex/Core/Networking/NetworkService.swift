@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class NetworkService {
+final class NetworkService: NetworkServiceProtocol {
     private let jsonDecoder = JSONDecoder()
     private let session: URLSession
 
