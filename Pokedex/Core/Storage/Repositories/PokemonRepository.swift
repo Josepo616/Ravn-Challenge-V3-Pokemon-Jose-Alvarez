@@ -10,9 +10,9 @@ import SwiftData
 
 @MainActor
 final class PokemonRepository: PokemonRepositoryProtocol {
-    let context: ModelContext
     private let networkService: NetworkService
     private let storageService: StorageService
+    private let context: ModelContext
     private var fetchError: Error?
 
     init(
@@ -27,27 +27,24 @@ final class PokemonRepository: PokemonRepositoryProtocol {
 
     // MARK: - Public Methods
 
-    func loadPokemons(offset: Int = 0, limit: Int = 50) async throws
-        -> [PokemonsEntity]
-    {
-        if let localPokemons = try storageService.getCatchedPokemons(
-            offset: offset,
-            limit: limit
-        ), localPokemons.count == limit {
-            return localPokemons
+    func loadPokemons(offset: Int = 0, limit: Int = 50) async throws -> [PokemonsEntity] {
+        if let cached = try storageService.getCachedPokemons(offset: offset, limit: limit),
+           cached.count == limit {
+            return cached
         }
 
-        let response: PokedexResponse = try await networkService.fetchPokemons(
-            offset: offset,
-            limit: limit
-        )
-        try await storageService.fetchDetailsAndPersistPokemons(from: response.results)
+        let response = try await networkService.fetchPokemons(offset: offset, limit: limit)
+
+        for result in response.results {
+            let bundle = try await networkService.fetchPokemonDetail(from: result.url, name: result.name)
+            let entity = PokemonMapper.map(bundle: bundle)
+            storageService.insertPokemon(entity)
+        }
+
+        try storageService.saveContext()
         try storageService.savePokedexMetadataIfNeeded(response: response)
 
-        return try storageService.getCatchedPokemons(
-            offset: offset,
-            limit: limit
-        ) ?? []
+        return try storageService.getCachedPokemons(offset: offset, limit: limit) ?? []
     }
 
     func fetchPokedexMetadata() throws -> [PokedexEntity] {
@@ -55,12 +52,15 @@ final class PokemonRepository: PokemonRepositoryProtocol {
     }
 
     func fetchPokemon(by name: String) async throws -> PokemonsEntity? {
-        if let localPokemon = try storageService.getCatchedPokemon(by: name) {
-            return localPokemon
+        if let local = try storageService.getCachedPokemon(by: name) {
+            return local
         }
-        let pokemon = try await networkService.getPokemonFromAPI(by: name)
-        try storageService.persistPokemon(pokemon)
-        return pokemon
+
+        let bundle = try await networkService.fetchPokemonDetailByName(name)
+        let entity = PokemonMapper.map(bundle: bundle)
+        storageService.insertPokemon(entity)
+        try storageService.saveContext()
+        return entity
     }
 
     func getFetchError() -> Error? {
