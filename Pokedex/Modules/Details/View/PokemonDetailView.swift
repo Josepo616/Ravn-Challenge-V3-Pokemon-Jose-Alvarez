@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct PokemonDetailView: View {
+    @ObservedObject var detailVM: DetailVM
     @State private var nextEvolutions: [PokemonUIModel] = []
     @State private var selectedTab = 0
     let pokemon: PokemonUIModel
-    let detailVM: DetailVM
 
     var body: some View {
         ScrollView(showsIndicators: false) {

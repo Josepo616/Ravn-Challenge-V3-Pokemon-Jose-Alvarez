@@ -25,8 +25,8 @@ struct PokemonListView: View {
                         ForEach(pokemons, id: \.self) { pokemon in
                             NavigationLink(
                                 destination: PokemonDetailView(
-                                    pokemon: pokemon,
-                                    detailVM: detailVM
+                                    detailVM: detailVM,
+                                    pokemon: pokemon
                                 )
                                 .toolbarRole(.editor)
                             ) {

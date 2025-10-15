@@ -17,17 +17,21 @@ struct PokedexApp: App {
     }()
 
     @StateObject private var listVM: ListVM
-    @State private var detailVM: DetailVM?
+    @StateObject private var detailVM: DetailVM
 
     init() {
         let context = sharedModelContainer.mainContext
         let repository = PokemonRepository(context: context)
-        _listVM = StateObject(wrappedValue: ListVM(repository: repository))
+        let listVM = ListVM(repository: repository)
+        let detailVM = DetailVM(listVM: listVM)
+
+        _listVM = StateObject(wrappedValue: listVM)
+        _detailVM = StateObject(wrappedValue: detailVM)
     }
 
     var body: some Scene {
         WindowGroup {
-            MainList(listVM: listVM, detailVM: DetailVM(listVM: listVM), searchQuery: $listVM.searchQuery)
+            MainList(listVM: listVM, detailVM: detailVM, searchQuery: $listVM.searchQuery)
         }
         .modelContainer(sharedModelContainer)
     }

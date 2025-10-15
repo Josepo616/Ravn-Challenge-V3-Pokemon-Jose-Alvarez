@@ -18,8 +18,8 @@ struct EvolutionRowView: View {
             EvolutionArrowView(trigger: basePokemon.evolutionTrigger ?? "Unknown")
             NavigationLink(
                 destination: PokemonDetailView(
-                    pokemon: evolution,
-                    detailVM: detailVM
+                    detailVM: detailVM,
+                    pokemon: evolution
                 )
                 .toolbarRole(.editor)
             ) {
