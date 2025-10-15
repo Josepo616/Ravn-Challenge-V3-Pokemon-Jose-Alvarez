@@ -13,7 +13,7 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
     let name: String
     let imageURL: String?
     let imageShinyURL: String?
-    let types: [PokemonTypeEntity]
+    let types: [PokemonTypeUIModel]
     let height: Double
     let weight: Double
     let color: String
@@ -44,7 +44,7 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
         self.imageURL = imageURL
         self.imageShinyURL = imageShinyURL
         self.types = types.map {
-            PokemonTypeEntity(
+            PokemonTypeUIModel(
                 slot: $0.slot,
                 typeName: $0.type.name,
                 typeURL: $0.type.url
