@@ -10,12 +10,9 @@ import Foundation
 struct PokemonTypeUIModel: Hashable {
     var slot: Int
     var typeName: String
-    var typeURL: String
-    var pokemon: PokemonUIModel?
     
-    init(slot: Int, typeName: String, typeURL: String) {
+    init(slot: Int, typeName: String) {
         self.slot = slot
         self.typeName = typeName
-        self.typeURL = typeURL
     }
 }

@@ -8,8 +8,8 @@
 import Foundation
 
 extension NextEvolutionEntity {
-    func toNextEvolution() -> NextEvolution {
-        return NextEvolution(
+    func toNextEvolution() -> NextEvolutionUIModel {
+        return NextEvolutionUIModel(
             name: self.name,
             url: self.url,
             triggerName: ""

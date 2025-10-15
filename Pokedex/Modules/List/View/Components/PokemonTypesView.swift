@@ -15,10 +15,6 @@ struct PokemonTypesView: View {
             ForEach(types.sorted(by: { $0.slot < $1.slot }), id: \.self) {
                 type in
                 TypeIconView(typeName: type.typeName)
-                    .onAppear() {
-                        print("pokemon type: \(type.typeName)")
-                        print("pokemon type url: \(type.typeURL)")
-                    }
             }
         }
         .padding(.trailing, 8)

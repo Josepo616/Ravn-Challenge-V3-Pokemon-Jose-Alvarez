@@ -21,7 +21,7 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
     let isLegendary: Bool
     let flavorText: String?
     let evolutionTrigger: String?
-    let nextEvolutions: [NextEvolutionEntity]
+    let nextEvolutions: [NextEvolutionUIModel]
 
     init(
         name: String,
@@ -36,8 +36,8 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
         flavorText: String?,
         evolutionTrigger: String?,
         isLegendary: Bool,
-        types: [PokemonType],
-        nextEvolution: [NextEvolution]?
+        types: [PokemonTypeUIModel],
+        nextEvolution: [NextEvolutionUIModel]?
     ) {
         self.id = id
         self.name = name
@@ -46,8 +46,7 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
         self.types = types.map {
             PokemonTypeUIModel(
                 slot: $0.slot,
-                typeName: $0.type.name,
-                typeURL: $0.type.url
+                typeName: $0.typeName
             )
         }
 
@@ -60,7 +59,7 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
         self.evolutionTrigger = evolutionTrigger
 
         self.nextEvolutions = nextEvolution?.map {
-            NextEvolutionEntity(name: $0.name, url: $0.url)
+            NextEvolutionUIModel(name: $0.name, url: $0.url)
         } ?? []
     }
 }

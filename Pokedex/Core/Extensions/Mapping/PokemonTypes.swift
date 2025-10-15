@@ -8,10 +8,10 @@
 import Foundation
 
 extension PokemonTypeEntity {
-    func toPokemonType() -> PokemonType {
-        return PokemonType(
+    func toPokemonType() -> PokemonTypeUIModel {
+        return PokemonTypeUIModel(
             slot: self.slot,
-            type: TypeDetails(name: self.typeName, url: self.typeURL)
+            typeName: self.typeName
         )
     }
 }
