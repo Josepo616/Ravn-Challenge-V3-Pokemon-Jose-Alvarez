@@ -115,27 +115,4 @@ class ListVM: ObservableObject {
         }
         isFetchingMore = false
     }
-
-    func fixGeneration(_ generation: String) -> String {
-        return
-            generation
-            .components(separatedBy: "-")
-            .enumerated()
-            .map { index, element in
-                return index == 1 ? element.uppercased() : element.capitalized
-            }
-            .joined(separator: " ")
-    }
-
-    func fetchNextEvolutions(for pokemon: PokemonUIModel) async -> [PokemonUIModel] {
-        guard !pokemon.nextEvolutions.isEmpty else { return [] }
-
-        var evolutions: [PokemonUIModel] = []
-        for evolutionName in pokemon.nextEvolutions {
-            if let fetched = await fetchPokemon(by: evolutionName.name) {
-                evolutions.append(fetched)
-            }
-        }
-        return evolutions
-    }
 }

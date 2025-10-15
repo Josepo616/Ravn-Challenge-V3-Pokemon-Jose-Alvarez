@@ -30,15 +30,4 @@ class DetailVM: ObservableObject {
         }
         return evolutions
     }
-    
-    func fixGeneration(_ generation: String) -> String {
-        return
-            generation
-            .components(separatedBy: "-")
-            .enumerated()
-            .map { index, element in
-                return index == 1 ? element.uppercased() : element.capitalized
-            }
-            .joined(separator: " ")
-    }
 }

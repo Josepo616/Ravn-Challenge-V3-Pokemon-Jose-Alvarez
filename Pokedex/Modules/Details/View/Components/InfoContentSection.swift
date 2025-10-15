@@ -21,7 +21,7 @@ struct InfoContentSection: View {
             TypeTagsSection(pokemon: pokemon)
                 .padding(.bottom, -30)
             
-            Text(detailVM.fixGeneration(pokemon.generation ?? "Unknown"))
+            Text(pokemon.generation.fixGeneration())
                 .font(.system(size: 17))
                 .padding(.bottom, 10)
             

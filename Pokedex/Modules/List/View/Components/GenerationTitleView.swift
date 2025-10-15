@@ -13,7 +13,7 @@ struct GenerationTitleView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(listVM.fixGeneration(generation))
+            Text(generation.fixGeneration())
                 .frame(maxWidth: .infinity, alignment: .leading)
             StandardDivider()
         }
