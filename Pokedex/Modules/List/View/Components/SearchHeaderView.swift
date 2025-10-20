@@ -10,16 +10,20 @@ import SwiftUI
 struct SearchHeaderView: View {
     @Binding var searchQuery: String
     @Binding var isSearching: Bool
+    @Binding var language: Languages
     let onSearchChange: (String) -> Void
     let onClearSearch: () -> Void
 
     var body: some View {
         VStack(spacing: 12) {
-            if !isSearching {
-                Text("Pokemon List")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            HStack {
+                if !isSearching {
+                    Text(MappingLanguages(language: language).TitleString())
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                LanguageSettingsView(language: $language)
             }
             HStack {
                 ZStack {
@@ -27,30 +31,33 @@ struct SearchHeaderView: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(height: 35)
 
-                    TextField("Search", text: $searchQuery)
-                        .foregroundColor(.gray)
-                        .padding(.horizontal)
-                        .frame(height: 35)
-                        .padding(.leading, 30)
-                        .overlay(
-                            HStack {
-                                Image(systemName: "magnifyingglass")
-                                    .foregroundColor(.gray)
-                                    .padding(.leading, 10)
-                                Spacer()
+                    TextField(
+                        MappingLanguages(language: language).SearchBarText(),
+                        text: $searchQuery
+                    )
+                    .foregroundColor(.gray)
+                    .padding(.horizontal)
+                    .frame(height: 35)
+                    .padding(.leading, 30)
+                    .overlay(
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.gray)
+                                .padding(.leading, 10)
+                            Spacer()
 
-                                if !searchQuery.isEmpty {
-                                    Button(action: onClearSearch) {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundColor(.gray)
-                                            .padding(.trailing, 10)
-                                    }
+                            if !searchQuery.isEmpty {
+                                Button(action: onClearSearch) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.gray)
+                                        .padding(.trailing, 10)
                                 }
                             }
-                        )
-                        .onChange(of: searchQuery) { _, newValue in
-                            onSearchChange(newValue)
                         }
+                    )
+                    .onChange(of: searchQuery) { _, newValue in
+                        onSearchChange(newValue)
+                    }
                 }
                 if !searchQuery.isEmpty {
                     Button(action: onClearSearch) {

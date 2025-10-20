@@ -18,6 +18,7 @@ struct PokedexApp: App {
 
     @StateObject private var listVM: ListVM
     @StateObject private var detailVM: DetailVM
+    private var preferredLanguageIdentifier = Locale.preferredLanguages.first?.components(separatedBy: "-").first ?? "en"
 
     init() {
         let context = sharedModelContainer.mainContext
@@ -31,7 +32,7 @@ struct PokedexApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainList(listVM: listVM, detailVM: detailVM, searchQuery: $listVM.searchQuery)
+            MainList(listVM: listVM, detailVM: detailVM, searchQuery: $listVM.searchQuery, language: preferredLanguageIdentifier == "es" ? .es : .en)
         }
         .modelContainer(sharedModelContainer)
     }

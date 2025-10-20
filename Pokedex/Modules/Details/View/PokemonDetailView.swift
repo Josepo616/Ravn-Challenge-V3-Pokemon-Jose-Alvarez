@@ -12,6 +12,7 @@ struct PokemonDetailView: View {
     @State private var nextEvolutions: [PokemonUIModel] = []
     @State private var selectedTab = 0
     let pokemon: PokemonUIModel
+    @Binding var language: Languages
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -23,18 +24,22 @@ struct PokemonDetailView: View {
 
                     ImageHeaderSection(
                         selectedTab: $selectedTab,
-                        pokemon: pokemon
+                        pokemon: pokemon,
+                        language: $language
                     )
                 }
 
                 InfoContentSection(
                     detailVM: detailVM,
                     pokemon: pokemon,
-                    nextEvolutions: nextEvolutions
+                    nextEvolutions: nextEvolutions,
+                    language: $language
                 )
             }
         }
-        .navigationTitle("Pokemon Info")
+        .navigationTitle(
+            MappingLanguages(language: language).DetailTitlteString()
+        )
         .navigationBarTitleDisplayMode(.inline)
         .task {
             nextEvolutions = await detailVM.fetchNextEvolutions(for: pokemon)

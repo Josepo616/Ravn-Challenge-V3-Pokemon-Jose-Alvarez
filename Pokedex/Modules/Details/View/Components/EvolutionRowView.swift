@@ -11,7 +11,8 @@ struct EvolutionRowView: View {
     let basePokemon: PokemonUIModel
     let evolution: PokemonUIModel
     let detailVM: DetailVM
-
+    @Binding var language: Languages
+    
     var body: some View {
         HStack(spacing: 16) {
             PokemonEvolutionCard(pokemon: basePokemon, detailVM: detailVM)
@@ -19,7 +20,8 @@ struct EvolutionRowView: View {
             NavigationLink(
                 destination: PokemonDetailView(
                     detailVM: detailVM,
-                    pokemon: evolution
+                    pokemon: evolution,
+                    language: $language
                 )
                 .toolbarRole(.editor)
             ) {

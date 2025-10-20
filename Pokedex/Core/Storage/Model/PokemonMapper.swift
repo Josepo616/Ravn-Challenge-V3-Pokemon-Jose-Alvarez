@@ -12,6 +12,12 @@ struct PokemonMapper {
             from: bundle.evolution.chain,
             currentPokemonName: bundle.detail.name
         )
+        
+        let generationLocalized = Dictionary(
+            uniqueKeysWithValues: bundle.localizedGenerationNames.map { ($0.key.rawValue, $0.value) }
+        )
+
+        let selectedGeneration = generationLocalized["english"]
 
         return PokemonsEntity(
             name: bundle.name,
@@ -22,10 +28,12 @@ struct PokemonMapper {
             color: bundle.species.color.name,
             height: bundle.detail.height,
             weight: bundle.detail.weight,
-            generation: bundle.species.generation.name,
-            flavorText: bundle.species.englishFlavorText,
+            generation: selectedGeneration,
+            englishFlavorText: bundle.species.englishFlavorText,
+            spanishFlavorText: bundle.species.spanishFlavorText,
             evolutionTrigger: nextEvolutions.first?.triggerName ?? "",
             isLegendary: bundle.species.isLegendary,
+            generationLocalizedNames: generationLocalized,
             types: bundle.detail.types,
             nextEvolution: nextEvolutions
         )

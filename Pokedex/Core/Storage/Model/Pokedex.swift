@@ -114,7 +114,7 @@ struct PokemonSpecies: Decodable, Hashable {
 struct PokemonSpeciesDetail: Decodable {
     let color: ColorNameReference
     let evolutionChain: EvolutionChainReference
-    let generation: GenerationNameReference
+    let generation: GenerationLink
     let flavorTextEntries: [FlavorTextEntry]
     let isLegendary: Bool
 
@@ -127,6 +127,10 @@ struct PokemonSpeciesDetail: Decodable {
 
     var englishFlavorText: String? {
         flavorTextEntries.first(where: { $0.language.name == "en" })?.cleanedFlavorText
+    }
+    
+    var spanishFlavorText: String? {
+        flavorTextEntries.first(where: { $0.language.name == "es" })?.cleanedFlavorText
     }
 }
 
@@ -160,9 +164,25 @@ struct ColorNameReference: Decodable {
     let name: String
 }
 
-struct GenerationNameReference: Decodable {
+struct GenerationLink: Decodable {
+    let url: String
+}
+
+struct GenerationResponse: Decodable {
+    let name: String
+    let names: [LanguageName]
+    
+    func localizedName(for language: Languages) -> String? {
+        return names.first(where: { $0.language.name == language.localeIdentifier })?.name
+    }
+}
+
+
+struct LanguageName: Decodable {
+    let language: FlavorResponse
     let name: String
 }
+
 
 struct EvolutionChainReference: Decodable {
     let url: String

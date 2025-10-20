@@ -12,6 +12,7 @@ struct MainList: View {
     @ObservedObject var listVM: ListVM
     @ObservedObject var detailVM: DetailVM
     @Binding var searchQuery: String
+    @State var language: Languages
     @State private var activeAlert: AlertType? = nil
     @State private var showEmptyState = false
     
@@ -21,6 +22,7 @@ struct MainList: View {
                 SearchHeaderView(
                     searchQuery: $searchQuery,
                     isSearching: $listVM.isSearching,
+                    language: $language,
                     onSearchChange: listVM.handleSearchChange,
                     onClearSearch: clearSearch
                 )
@@ -35,7 +37,8 @@ struct MainList: View {
                     pokemons: listVM.filteredPokemons,
                     listVM: listVM,
                     detailVM: detailVM,
-                    showEmptyState: showEmptyState
+                    showEmptyState: showEmptyState,
+                    language: $language
                 )
             }
             .task {

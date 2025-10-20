@@ -19,8 +19,11 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
     let color: String
     let generation: String
     let isLegendary: Bool
-    let flavorText: String?
+    let generationLocalizedNames: [String: String]
+    let englishFlavorText: String?
+    let spanishFlavorText: String?
     let evolutionTrigger: String?
+    
     let nextEvolutions: [NextEvolutionUIModel]
 
     init(
@@ -33,9 +36,11 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
         height: Double,
         weight: Double,
         generation: String?,
-        flavorText: String?,
+        englishFlavorText: String?,
+        spanishFlavorText: String?,
         evolutionTrigger: String?,
         isLegendary: Bool,
+        generationLocalizedNames: [String: String] = [:],
         types: [PokemonTypeUIModel],
         nextEvolution: [NextEvolutionUIModel]?
     ) {
@@ -55,7 +60,9 @@ struct PokemonUIModel: Identifiable, Equatable, Hashable {
         self.color = color
         self.generation = generation ?? "Unknown"
         self.isLegendary = isLegendary
-        self.flavorText = flavorText
+        self.generationLocalizedNames = generationLocalizedNames
+        self.englishFlavorText = englishFlavorText
+        self.spanishFlavorText = spanishFlavorText
         self.evolutionTrigger = evolutionTrigger
 
         self.nextEvolutions = nextEvolution?.map {

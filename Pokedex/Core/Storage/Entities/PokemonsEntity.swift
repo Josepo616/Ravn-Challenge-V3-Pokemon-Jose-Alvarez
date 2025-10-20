@@ -20,13 +20,17 @@ class PokemonsEntity: Hashable, Identifiable {
 
     var color: String?
     var generation: String?
-    var flavorText: String?
+    var englishFlavorText: String?
+    var spanishFlavorText: String?
     var evolutionTrigger: String?
 
     var imageURL: String?
     var imageShinyURL: String?
     
     var isLegendary: Bool
+    
+    var generationLocalizedNames: [String: String]
+
 
     @Relationship(deleteRule: .cascade, inverse: \PokemonTypeEntity.pokemon)
     var types: [PokemonTypeEntity] = []
@@ -44,9 +48,11 @@ class PokemonsEntity: Hashable, Identifiable {
         height: Double,
         weight: Double,
         generation: String?,
-        flavorText: String?,
+        englishFlavorText: String?,
+        spanishFlavorText: String?,
         evolutionTrigger: String?,
         isLegendary: Bool,
+        generationLocalizedNames: [String: String] = [:],
         types: [PokemonType],
         nextEvolution: [NextEvolution]?
     ) {
@@ -60,8 +66,10 @@ class PokemonsEntity: Hashable, Identifiable {
         self.weight = weight
         self.generation = generation
         self.isLegendary = isLegendary
-        self.flavorText = flavorText
+        self.englishFlavorText = englishFlavorText
+        self.spanishFlavorText = spanishFlavorText
         self.evolutionTrigger = evolutionTrigger
+        self.generationLocalizedNames = generationLocalizedNames
 
         self.types = types.map {
             PokemonTypeEntity(

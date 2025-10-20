@@ -42,24 +42,50 @@ final class NetworkService: NetworkServiceProtocol {
     func fetchPokemonDetail(from url: String, name: String) async throws
         -> PokemonDetailBundle
     {
-        let (detail, species, evolution):
+        let (detail, species, evolution, generation):
             (
                 PokemonDetail,
                 PokemonSpeciesDetail,
-                EvolutionChainResponse
+                EvolutionChainResponse,
+                GenerationResponse
             ) = try await fetchLinkedResources(
                 rootURL: url,
                 speciesURL: { $0.species.url },
-                evolutionURL: { $0.evolutionChain.url }
+                evolutionURL: { $0.evolutionChain.url },
+                generationURL: { $0.generation.url }
             )
+
+        let localizedGenerationNames = try await fetchLocalizedGenerationNames(from: species.generation.url)
 
         return PokemonDetailBundle(
             name: name,
             url: url,
             detail: detail,
             species: species,
-            evolution: evolution
+            evolution: evolution,
+            generation: generation,
+            localizedGenerationNames: localizedGenerationNames
         )
+    }
+
+    func fetchLocalizedGenerationNames(
+        from url: String,
+        languages: [Languages] = [.en, .es]
+    ) async throws -> [Languages: String] {
+        let response = try await fetchData(
+            from: url,
+            as: GenerationResponse.self
+        )
+
+        var localizedNames: [Languages: String] = [:]
+        for lang in languages {
+            if let localized = response.localizedName(for: lang) {
+                localizedNames[lang] = localized
+            } else {
+                localizedNames[lang] = ""
+            }
+        }
+        return localizedNames
     }
 
     // MARK: - Private Helpers
@@ -86,12 +112,14 @@ final class NetworkService: NetworkServiceProtocol {
     private func fetchLinkedResources<
         T1: Decodable,
         T2: Decodable,
-        T3: Decodable
+        T3: Decodable,
+        T4: Decodable
     >(
         rootURL: String,
         speciesURL: (T1) -> String,
-        evolutionURL: (T2) -> String
-    ) async throws -> (T1, T2, T3) {
+        evolutionURL: (T2) -> String,
+        generationURL: (T2) -> String
+    ) async throws -> (T1, T2, T3, T4) {
         let detail: T1 = try await fetchData(from: rootURL, as: T1.self)
         let species: T2 = try await fetchData(
             from: speciesURL(detail),
@@ -101,6 +129,11 @@ final class NetworkService: NetworkServiceProtocol {
             from: evolutionURL(species),
             as: T3.self
         )
-        return (detail, species, evolution)
+        let generation: T4 = try await fetchData(
+            from: generationURL(species),
+            as: T4.self
+
+        )
+        return (detail, species, evolution, generation)
     }
 }

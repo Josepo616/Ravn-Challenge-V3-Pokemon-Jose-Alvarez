@@ -10,7 +10,8 @@ import SwiftUI
 struct ImageHeaderSection: View {
     @Binding var selectedTab: Int
     let pokemon: PokemonUIModel
-
+    @Binding var language: Languages
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
@@ -31,12 +32,12 @@ struct ImageHeaderSection: View {
             HStack {
                 SpriteTabButton(
                     selectedTab: $selectedTab,
-                    title: "Default Sprite",
+                    title: MappingLanguages(language: language).DefaultSpriteString(),
                     index: 0
                 )
                 SpriteTabButton(
                     selectedTab: $selectedTab,
-                    title: "Shiny Sprite",
+                    title: MappingLanguages(language: language).ShinySpriteString(),
                     index: 1
                 )
             }

@@ -19,9 +19,11 @@ extension PokemonsEntity {
             height: height,
             weight: weight,
             generation: generation,
-            flavorText: flavorText,
+            englishFlavorText: englishFlavorText,
+            spanishFlavorText: spanishFlavorText,
             evolutionTrigger: evolutionTrigger,
             isLegendary: isLegendary,
+            generationLocalizedNames: generationLocalizedNames,
             types: types.map { $0.toPokemonType() },
             nextEvolution: nextEvolutions.map { $0.toNextEvolution() }
         )

@@ -11,10 +11,11 @@ struct EvolutionSection: View {
     let detailVM: DetailVM
     let pokemon: PokemonUIModel
     let nextEvolutions: [PokemonUIModel]
-
+    @Binding var language: Languages
+    
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
-            Text("Evolutions")
+            Text(MappingLanguages(language: language).EvolutionTitleString())
                 .font(.system(size: 22, weight: .bold))
                 .padding(.top, 8)
 
@@ -25,7 +26,8 @@ struct EvolutionSection: View {
                             EvolutionRowView(
                                 basePokemon: pokemon,
                                 evolution: evolution,
-                                detailVM: detailVM
+                                detailVM: detailVM,
+                                language: $language
                             )
                         }
                     }

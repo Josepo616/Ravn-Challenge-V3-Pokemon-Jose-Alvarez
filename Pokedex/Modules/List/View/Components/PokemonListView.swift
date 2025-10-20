@@ -14,11 +14,16 @@ struct PokemonListView: View {
     let listVM: ListVM
     let detailVM: DetailVM
     let showEmptyState: Bool
+    @Binding var language: Languages
+    
     var groupedPokemons: [(generation: String, pokemons: [PokemonUIModel])] {
-        return Dictionary(grouping: pokemons, by: { $0.generation })
-            .sorted(by: { $0.key < $1.key })
-            .map { (generation: $0.key, pokemons: $0.value) }
+        return Dictionary(grouping: pokemons, by: { pokemon in
+            pokemon.generationLocalizedNames[language.rawValue] ?? pokemon.generation
+        })
+        .sorted(by: { $0.key < $1.key })
+        .map { (generation: $0.key, pokemons: $0.value) }
     }
+
 
 
     var body: some View {
@@ -37,7 +42,8 @@ struct PokemonListView: View {
                                 NavigationLink(
                                     destination: PokemonDetailView(
                                         detailVM: detailVM,
-                                        pokemon: pokemon
+                                        pokemon: pokemon,
+                                        language: $language
                                     )
                                     .toolbarRole(.editor)
                                 ) {

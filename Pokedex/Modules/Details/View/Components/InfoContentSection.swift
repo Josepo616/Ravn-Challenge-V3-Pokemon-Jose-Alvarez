@@ -11,26 +11,33 @@ struct InfoContentSection: View {
     let detailVM: DetailVM
     let pokemon: PokemonUIModel
     let nextEvolutions: [PokemonUIModel]
-    
+    @Binding var language: Languages
+
     var body: some View {
         VStack(spacing: 0.0000001) {
             Text(pokemon.displayName)
-            .font(.system(size: 28))
-            .padding(.bottom, -50)
-            
+                .font(.system(size: 28))
+                .padding(.bottom, -50)
+
             TypeTagsSection(pokemon: pokemon)
                 .padding(.bottom, -30)
-            
-            Text(pokemon.generation.fixGeneration())
-                .font(.system(size: 17))
-                .padding(.bottom, 10)
-            
-            Text(pokemon.flavorText ?? "No description")
-                .font(.system(size: 15))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 10)
-            
+
+            Text(
+                pokemon.generationLocalizedNames[language.rawValue]?
+                    .fixGeneration() ?? "No generation"
+            )
+            .font(.system(size: 17))
+            .padding(.bottom, 10)
+
+            Text(
+                MappingLanguages(language: language, pokemon: pokemon)
+                    .flavorTextString()
+            )
+            .font(.system(size: 15))
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 10)
+
             Text(pokemon.formattedPhysicalInfo)
 
             if !nextEvolutions.isEmpty {
@@ -39,7 +46,8 @@ struct InfoContentSection: View {
                 EvolutionSection(
                     detailVM: detailVM,
                     pokemon: pokemon,
-                    nextEvolutions: nextEvolutions
+                    nextEvolutions: nextEvolutions,
+                    language: $language
                 )
             }
         }

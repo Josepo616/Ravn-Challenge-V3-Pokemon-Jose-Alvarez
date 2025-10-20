@@ -19,7 +19,7 @@ struct SpriteTabButton: View {
             Text(title)
                 .font(.system(size: 14))
                 .foregroundColor(.primary)
-                .padding(.horizontal, 50)
+                .padding(.horizontal, 20)
                 .padding(.vertical, 10)
                 .background(
                     selectedTab == index

@@ -12,4 +12,6 @@ struct PokemonDetailBundle {
     let detail: PokemonDetail
     let species: PokemonSpeciesDetail
     let evolution: EvolutionChainResponse
+    let generation: GenerationResponse
+    let localizedGenerationNames: [Languages: String]
 }
