@@ -8,10 +8,10 @@ import Foundation
 // MARK: - Implementation Details
 
 internal enum L10n {
-    static func tr(_ table: String, _ key: String, fallback value: String, language: Languages) -> String {
-        let locale = Locale(identifier: language.localeIdentifier)
-        let format = Bundle.main.localizedString(forKey: key, value: value, table: table)
-        return String(format: format, locale: locale)
+    static func tr(_ key: String, language: Languages) -> String {
+        let path = Bundle.main.path(forResource: language.localeIdentifier, ofType: "lproj") ?? ""
+        let bundle = Bundle(path: path) ?? .main
+        return NSLocalizedString(key, bundle: bundle, comment: "")
     }
 }
 // swiftlint:disable convenience_type
