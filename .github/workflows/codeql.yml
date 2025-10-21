@@ -39,11 +39,11 @@ jobs:
         if: matrix.build-mode == 'manual'
         shell: bash
         run: |
-          echo 'Building the Swift project...'
-          # Navigate to the root directory where .xcodeproj file is located
-          cd ../
-          # Run the build command with the correct scheme
-          xcodebuild -scheme Pokedex -sdk iphonesimulator -configuration Debug
+            echo 'Building the Swift project...'
+            # Ensure we are in the root directory of the project where the .xcodeproj file is located
+            cd $GITHUB_WORKSPACE
+            # Run the build command with the correct scheme
+            xcodebuild -scheme Pokedex -sdk iphonesimulator -configuration Debug
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
