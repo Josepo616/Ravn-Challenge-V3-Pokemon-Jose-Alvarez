@@ -9,31 +9,31 @@ struct MappingLanguages {
     let language: Languages
     var pokemon: PokemonUIModel? = nil
 
-    func TitleString() -> String {
+    func titleString() -> String {
         return L10n.tr("pokemonListTitle", language: language)
     }
 
-    func SearchBarText() -> String {
+    func searchBarText() -> String {
         return L10n.tr("searchPlaceholder", language: language)
 
     }
 
-    func DetailTitlteString() -> String {
+    func detailTitlteString() -> String {
         return L10n.tr("pokemonDetailTittle", language: language)
 
     }
 
-    func EvolutionTitleString() -> String {
+    func evolutionTitleString() -> String {
         return L10n.tr("evolutionTitle", language: language)
 
     }
     
-    func DefaultSpriteString() -> String {
+    func defaultSpriteString() -> String {
         return L10n.tr("defaultSprite", language: language)
 
     }
     
-    func ShinySpriteString() -> String {
+    func shinySpriteString() -> String {
         return L10n.tr("shinySprite", language: language)
 
     }

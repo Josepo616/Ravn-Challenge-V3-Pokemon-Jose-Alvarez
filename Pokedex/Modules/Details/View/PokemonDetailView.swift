@@ -38,7 +38,7 @@ struct PokemonDetailView: View {
             }
         }
         .navigationTitle(
-            MappingLanguages(language: language).DetailTitlteString()
+            MappingLanguages(language: language).detailTitlteString()
         )
         .navigationBarTitleDisplayMode(.inline)
         .task {

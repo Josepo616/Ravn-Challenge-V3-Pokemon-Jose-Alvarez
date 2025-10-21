@@ -17,8 +17,7 @@ final class NetworkService: NetworkServiceProtocol {
 
     // MARK: - Public
 
-    func fetchPokemons(offset: Int, limit: Int) async throws -> PokedexResponse
-    {
+    func fetchPokemons(offset: Int, limit: Int) async throws -> PokedexResponse {
         let api = PokeApiService(
             endpoint: .pokemon,
             parameters: [.limit: "\(limit)", .offset: "\(offset)"]
@@ -30,8 +29,7 @@ final class NetworkService: NetworkServiceProtocol {
     }
 
     func fetchPokemonDetailByName(_ name: String) async throws
-        -> PokemonDetailBundle
-    {
+        -> PokemonDetailBundle {
         let api = PokeApiService(endpoint: .pokemonByName(name))
         return try await fetchPokemonDetail(
             from: api.url.absoluteString,
@@ -40,10 +38,9 @@ final class NetworkService: NetworkServiceProtocol {
     }
 
     func fetchPokemonDetail(from url: String, name: String) async throws
-        -> PokemonDetailBundle
-    {
+        -> PokemonDetailBundle {
         let (detail, species, evolution, generation):
-            (
+    (
                 PokemonDetail,
                 PokemonSpeciesDetail,
                 EvolutionChainResponse,

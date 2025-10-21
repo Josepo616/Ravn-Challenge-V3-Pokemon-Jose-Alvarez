@@ -32,12 +32,12 @@ struct ImageHeaderSection: View {
             HStack {
                 SpriteTabButton(
                     selectedTab: $selectedTab,
-                    title: MappingLanguages(language: language).DefaultSpriteString(),
+                    title: MappingLanguages(language: language).defaultSpriteString(),
                     index: 0
                 )
                 SpriteTabButton(
                     selectedTab: $selectedTab,
-                    title: MappingLanguages(language: language).ShinySpriteString(),
+                    title: MappingLanguages(language: language).shinySpriteString(),
                     index: 1
                 )
             }

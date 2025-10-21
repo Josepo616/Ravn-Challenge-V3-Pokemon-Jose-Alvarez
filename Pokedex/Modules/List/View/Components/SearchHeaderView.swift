@@ -18,7 +18,7 @@ struct SearchHeaderView: View {
         VStack(spacing: 12) {
             HStack {
                 if !isSearching {
-                    Text(MappingLanguages(language: language).TitleString())
+                    Text(MappingLanguages(language: language).titleString())
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -32,7 +32,7 @@ struct SearchHeaderView: View {
                         .frame(height: 35)
 
                     TextField(
-                        MappingLanguages(language: language).SearchBarText(),
+                        MappingLanguages(language: language).searchBarText(),
                         text: $searchQuery
                     )
                     .foregroundColor(.gray)

@@ -15,7 +15,7 @@ struct EvolutionSection: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
-            Text(MappingLanguages(language: language).EvolutionTitleString())
+            Text(MappingLanguages(language: language).evolutionTitleString())
                 .font(.system(size: 22, weight: .bold))
                 .padding(.top, 8)
 
