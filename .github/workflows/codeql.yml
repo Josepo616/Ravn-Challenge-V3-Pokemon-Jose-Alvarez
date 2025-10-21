@@ -88,9 +88,9 @@ jobs:
       shell: bash
       run: |
           echo 'Building the Swift project...'
-    # Navigate to the .xcodeproj file
-    cd ../../
-    xcodebuild -scheme Pokedex -sdk iphonesimulator -configuration Debug
+        # Navigate to the .xcodeproj file
+        cd ../../
+        xcodebuild -scheme Pokedex -sdk iphonesimulator -configuration Debug
 
 
     - name: Perform CodeQL Analysis
